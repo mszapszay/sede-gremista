@@ -1,0 +1,579 @@
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+25 Mar, 2026 - 25 Mai, 2026    Valor em R$   
+Saldo final do período   
+R$ 2.768,17   
+Saldo inicial    + 1.567,34   
+Total de entradas    + 19.261,13
+Total de saídas    - 18.060,30   
+Saldo final do período    + 2.768,17   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+15:54    Pix    Pix Antonio Pietro Almeida    Recebido    +77,20
+16:19    Pix    Pix Gustavo Oliveira de Oliveira    Recebido    +35,00
+16:59    Pix    Pix Eduardo Portella dos Santos    Recebido    +144,00
+23:27    Pix    Pix Leonardo Santos da Costa    Recebido    +59,50   
+Saldo do dia    + 1.883,04
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+09:40    Pix    Pix Antonio Pietro Almeida    Recebido    +73,09
+17:43    Pix    Pix Bruno Ajala Fernandes    Recebido    +30,00
+21:02    Pix    Pix ANDRE TORIBIO LEAO    Recebido    +60,00   
+Saldo do dia    + 2.046,13
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+10:50    Pix    Pix Henrique Silva de Oliveira    Recebido    +90,00   
+Saldo do dia    + 2.136,13   
+25 Mar, 2026
+26 Mar, 2026
+27 Mar, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 1 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+17:04    Pix    Pix Rodrigo Heidrich da Silva Schaefer    Recebido    +20,00   
+Saldo do dia    + 2.156,13
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+07:59    Pix    Pix MARCUS VINICIUS COELHO LEITE    Recebido    +30,00
+08:48    Pix    Pix MARCUS VINICIUS COELHO LEITE    Enviado    -30,00
+11:31    Pix    Pix CXBX PATRIMONIAL LTDA    Recebido    +15,00
+17:23    Pix    Pix JACKSON DE MORAES PRADO    Recebido    +549,29
+17:24    Pix    Pix JACKSON DE MORAES PRADO    Recebido    +42,00
+17:27    Pix    Pix Vinicius Nicolodelli Testoni    Recebido    +42,00
+17:32    Pix    Pix Antonio Pietro Almeida    Recebido    +42,00
+21:08    Pix    Pix GERALDO FAGUNDES ALVES    Enviado    -1.000,00
+22:11    Pix    Pix THALES DA SILVA    Recebido    +42,00   
+Saldo do dia    + 1.888,42
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+09:06    Pix    Pix GUILHERME D S JACQUES    Recebido    +338,00
+09:27    Pix    Pix Eduardo Portella dos Santos    Enviado    -312,00
+19:40    Pix    Pix Dalmir Peres    Enviado    -1.266,00   
+Saldo do dia    + 648,42   
+30 Mar, 2026
+31 Mar, 2026
+01 Abr, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 2 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+19:04    Pix    Pix Pedro Henrique Nogueira de Araujo    Recebido    +30,00   
+Saldo do dia    + 678,42
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+01:12    Pix    Pix AUGUSTO O CONTE JR    Recebido    +44,00
+01:13    Pix    Pix Gustavo Oliveira de Oliveira    Recebido    +48,00
+01:15    Pix    Pix AUGUSTO O CONTE JR    Recebido    +12,00
+01:28    Pix    Pix BRAYAN GONCALVES SOUZA DA SILVA    Recebido    +12,00   
+Saldo do dia    + 794,42
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+12:46    Pix    Pix FELIPE PEREIRA OUTEIRO    Recebido    +12,00   
+Saldo do dia    + 806,42
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+17:06    Pix    Pix DIEGO DE ANDRADE NUNEZ    Recebido    +20,00
+17:49    Pix    Pix Pedro Henrique Cipriani Maltez Souza    Recebido    +20,00
+18:04    Pix    Pix Ana Clara Vives Davila    Recebido    +15,00
+18:14    Pix    Pix Matheus Almeida    Recebido    +20,00
+18:21    Pix    Pix Pedro Henrique Cipriani Maltez Souza    Recebido    +20,00
+18:46    Pix    Pix Pedro Henrique Cipriani Maltez Souza    Recebido    +20,00   
+02 Abr, 2026
+03 Abr, 2026
+04 Abr, 2026
+05 Abr, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 3 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+18:54    Pix    Pix Leo Fogliato Santana    Recebido    +20,00
+18:59    Pix    Pix DIEGO DE ANDRADE NUNEZ    Recebido    +20,00
+19:05    Pix    Pix Rhuan Luigi Ramos Borges de Nogueira    Recebido    +15,00
+19:09    Pix    Pix Dener Gustavo Mendes Correa    Recebido    +20,00
+19:10    Pix    Pix Ana Clara Vives Davila    Recebido    +15,00
+19:23    Pix    Pix Leo Fogliato Santana    Recebido    +15,00
+19:32    Pix    Pix Bruno Ajala Fernandes    Recebido    +15,00
+19:38    Pix    Pix Dener Gustavo Mendes Correa    Recebido    +20,00
+19:48    Pix    Pix MAURICIO THUROW LEVIEN    Recebido    +15,00
+20:03    Pix    Pix DIEGO DE ANDRADE NUNEZ    Recebido    +15,00
+22:50    Pix    Pix MARCUS V COELHO LEITE    Recebido    +15,00
+22:51    Pix    Pix BELO BRASIL LTDA    Recebido    +15,00   
+Saldo do dia    + 1.121,42
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+01:58    Depósito de vendas    Vendas    Depósito InfinitePay    +249,94
+01:58    Depósito de vendas    Vendas    Depósito InfinitePay    +810,23
+02:53    Depósito de vendas    Vendas    Depósito InfinitePay    +340,25
+02:53    Depósito de vendas    Vendas    Depósito InfinitePay    +179,50   
+05 Abr, 2026
+06 Abr, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 4 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+07:15    Pix    Pix JOAO MACHADO SCHUELER    Recebido    +30,00
+13:27    Pix    Pix MAURICIO THUROW LEVIEN    Recebido    +24,00   
+Saldo do dia    + 2.755,34
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+09:25    Pix    Pix GABRIEL EMIL CAUDURO    Recebido    +42,00
+09:51    Pix    Pix Dalmir Peres    Enviado    -1.062,00
+17:35    Pix    Pix FELIPE STEEMBURGO DE AZEVEDO    Enviado    -84,62
+17:36    Pix    Pix Eduardo Portella dos Santos    Enviado    -54,00
+19:31    Pix    Pix Rhuan Luigi Ramos Borges de Nogueira    Recebido    +12,00
+20:02    Pix    Pix MATHEUS DA CRUZ REIS RIBEIRO    Recebido    +12,00
+20:32    Pix    Pix Rhuan Luigi Ramos Borges de Nogueira    Recebido    +12,00
+20:51    Pix    Pix RAFAEL BUENO SEVERO    Recebido    +12,00
+21:23    Pix    Pix RAFAEL BUENO SEVERO    Recebido    +12,00
+21:58    Pix    Pix RAFAEL BUENO SEVERO    Recebido    +12,00
+22:28    Pix    Pix Lucas da Fonseca Machado    Recebido    +15,00
+22:30    Pix    Pix Patricia Benelli    Recebido    +39,00   
+Saldo do dia    + 1.722,72   
+06 Abr, 2026
+07 Abr, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 5 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+00:42    Depósito de vendas    Vendas    Depósito InfinitePay    +94,69
+01:37    Depósito de vendas    Vendas    Depósito InfinitePay    +40,69
+08:15    Pix    Pix Henrique Saldanha da Cunha    Recebido    +74,20
+10:10    Pix    Pix FELIPE STEEMBURGO DE AZEVEDO    Recebido    +15,00
+10:13    Pix    Pix FELIPE STEEMBURGO DE AZEVEDO    Recebido    +21,00
+10:35    Pix    Pix MARIANA DA ROCHA PERES    Enviado    -150,00   
+Saldo do dia    + 1.818,30
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+15:10    Pix    Pix Lucas da Fonseca Machado    Recebido    +15,00   
+Saldo do dia    + 1.833,30
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+13:05    Pix    Pix JHONATAN MACIEL DE SOUZA    Recebido    +15,00
+13:23    Pix    Pix Matheus Almeida    Recebido    +20,00
+13:28    Pix    Pix Matheus da Cruz Reis Ribeiro    Recebido    +15,00
+13:29    Pix    Pix CAIO AUREO ALVES SCHMITT NETO    Recebido    +15,00
+13:50    Pix    Pix JHONATAN MACIEL DE SOUZA    Recebido    +15,00
+13:53    Pix    Pix Matheus Almeida    Recebido    +20,00
+14:06    Pix    Pix IGOR MICHEL DOS SANTOS BORGES    Recebido    +21,00
+14:09    Pix    Pix LUCAS VASQUES DICKEL    Recebido    +15,00   
+08 Abr, 2026
+09 Abr, 2026
+11 Abr, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 6 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+14:14    Pix    Pix LORENZO BALESTRIN PITTA PINHEIRO CO    Recebido    +6,00
+15:03    Pix    Pix Brunno Pereira Soares Couto    Recebido    +6,00
+15:08    Pix    Pix EDUARDO BLUM ARAGONES    Recebido    +20,00
+15:24    Pix    Pix JEAN CASSIO CARRARO RIBEIRO GONCALVES    Enviado    -5,00
+15:33    Pix    Pix RULA TRANSPORTES LTDA    Recebido    +12,00
+15:40    Pix    Pix LORENZO BALESTRIN PITTA PINHEIRO CO    Recebido    +6,00
+15:41    Pix    Pix Matheus Almeida    Recebido    +6,00
+15:43    Pix    Pix Brunno Pereira Soares Couto    Recebido    +6,00
+22:34    Pix    Pix AUGUSTO O CONTE JR    Recebido    +35,00   
+Saldo do dia    + 2.061,30
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+02:01    Pix    Pix LETICIA FAGUNDES BEDNARSKI    Recebido    +15,00   
+Saldo do dia    + 2.076,30
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+01:33    Depósito de vendas    Vendas    Depósito InfinitePay    +412,21
+01:33    Depósito de vendas    Vendas    Depósito InfinitePay    +29,59
+02:31    Depósito de vendas    Vendas    Depósito InfinitePay    +327,72
+02:31    Depósito de vendas    Vendas    Depósito InfinitePay    +354,56   
+11 Abr, 2026
+12 Abr, 2026
+13 Abr, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 7 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+08:35    Pix    Pix FELIPE STEEMBURGO DE AZEVEDO    Enviado    -26,00
+11:44    Pix    Pix COMPANHIA ESTADUAL DE DISTRIBUICAO DE ENERGIA
+ELETRICA - CEEE-D    Enviado    -735,68
+11:47    Boleto    CEEE RS DISTRIBUICAO    Pagamento efetuado    -194,12
+11:49    Boleto    DMAE PORTO ALEGRE    Pagamento efetuado    -168,30
+12:52    Pix    Pix CXBX PATRIMONIAL LTDA    Enviado    -10,00
+14:10    Pix    Pix GUILHERME DRESCH DA SILVEIRA JACQUE    Recebido    +140,00
+18:32    Pix    Pix MINISTERIO DA FAZENDA    Enviado    -268,26
+18:34    Pix    Pix MINISTERIO DA FAZENDA    Enviado    -384,36   
+Saldo do dia    + 1.553,66
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+00:22    Pix    Pix DISKNET TI LTDA    Enviado    -112,23
+10:31    Pix    Pix THALES DA SILVA    Recebido    +60,00
+10:34    Pix    Pix PEDRO CARPES DE CAMARGO    Recebido    +25,00
+12:19    Pix    Pix FILIPE CAREGNATO GARCIA    Recebido    +6,00
+14:28    Pix    Pix Leonardo Santos da Costa    Recebido    +36,00
+14:36    Pix    Pix LUCAS MENDES    Recebido    +30,00
+17:58    Pix    Pix ANDREY SANHUDO ALVES    Recebido    +15,00
+22:44    Pix    Pix Carjan Salerno Rocha    Recebido    +38,50   
+Saldo do dia    + 1.651,93   
+13 Abr, 2026
+14 Abr, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 8 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+00:31    Depósito de vendas    Vendas    Depósito InfinitePay    +74,96
+00:31    Depósito de vendas    Vendas    Depósito InfinitePay    +20,71
+01:17    Depósito de vendas    Vendas    Depósito InfinitePay    +44,17
+01:17    Depósito de vendas    Vendas    Depósito InfinitePay    +33,57
+08:50    Pix    Pix Antonio Pietro Almeida    Recebido    +95,00
+09:13    Pix    Pix Pedro Costa de Barros    Recebido    +180,00
+10:33    Pix    Pix VINICIUS CAREGNATO GARCIA    Recebido    +15,00
+17:24    Pix    Pix Leonardo Santos da Costa    Recebido    +155,00
+18:24    Pix    Pix GUILHERME D S JACQUES    Recebido    +12,60
+20:34    Pix    Pix Felipe Schuster Giraffa    Recebido    +30,00
+21:50    Pix    Pix ERIC FERNANDO DA SILVA    Recebido    +18,00
+22:39    Pix    Pix 57.076.419 PEDRO MALTA DA CUNHA MEDEIROS    Recebido    +53,90
+22:54    Pix    Pix BRAYAN GONCALVES SOUZA DA SILVA    Recebido    +15,00   
+Saldo do dia    + 2.399,84
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+03:46    Pix    Pix Yan Mussnich Rotta Gomes de Assuncao    Recebido    +51,00
+09:33    Pix    Pix Carjan Salerno Rocha    Recebido    +21,00   
+15 Abr, 2026
+16 Abr, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 9 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+16:43    Pix    Pix Dalmir Peres    Enviado    -1.468,20
+18:19    Pix    Pix Larissa de Oliveira Castro    Recebido    +23,00   
+Saldo do dia    + 1.026,64
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+13:30    Pix    Pix Eduardo Portella dos Santos    Enviado    -153,00
+13:33    Pix    Pix Mauricio Pinto Szapszay    Recebido    +300,00
+13:34    Pix    Pix Dalmir Peres    Enviado    -1.025,40
+17:47    Pix    Pix JUAN SILVA CUNDA    Recebido    +12,00   
+Saldo do dia    + 160,24
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+11:42    Pix    Pix Daniel Santos Cestari    Enviado    -20,00
+13:12    Pix    Pix JOAO MACHADO SCHUELER    Recebido    +45,00
+13:13    Pix    Pix Rhuan Luigi Ramos Borges de Nogueira    Recebido    +15,00
+13:27    Pix    Pix Pedro Henrique Nogueira de Araujo    Recebido    +36,00
+16:58    Pix    Pix DIEGO DE ANDRADE NUNEZ    Recebido    +20,00
+17:39    Pix    Pix LORENZO BALESTRIN PITTA PINHEIRO CO    Recebido    +6,00
+17:40    Pix    Pix CAMILA LUIZ MACHADO    Recebido    +5,00
+17:46    Pix    Pix JOAO MACHADO SCHUELER    Recebido    +5,00   
+16 Abr, 2026
+20 Abr, 2026
+21 Abr, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 10 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+17:53    Pix    Pix DIEGO DE ANDRADE NUNEZ    Recebido    +20,00
+18:01    Pix    Pix Ana Clara Vives Davila    Recebido    +20,00
+18:14    Pix    Pix Wellison de Moraes Prado    Recebido    +15,00
+18:30    Pix    Pix Wellison de Moraes Prado    Recebido    +15,00
+18:31    Pix    Pix MAURICIO THUROW LEVIEN    Recebido    +15,00
+20:50    Pix    Pix FELIPE STEEMBURGO DE AZEVEDO    Recebido    +90,00
+21:44    Pix    Pix JOAO VITOR AMORIM REMIAO    Recebido    +15,00   
+Saldo do dia    + 462,24
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+00:10    Pix    Pix Derik de Oliveira da Silva    Recebido    +30,00
+00:54    Depósito de vendas    Vendas    Depósito InfinitePay    +186,41
+00:54    Depósito de vendas    Vendas    Depósito InfinitePay    +494,09
+02:08    Depósito de vendas    Vendas    Depósito InfinitePay    +749,00
+02:08    Depósito de vendas    Vendas    Depósito InfinitePay    +788,20
+09:29    Boleto    DMAE PORTO ALEGRE    Pagamento efetuado    -1.405,41
+09:37    Pix    Pix Mauricio Pinto Szapszay    Recebido    +325,00
+18:31    Pix    Pix Eduardo Portella dos Santos    Enviado    -167,67   
+21 Abr, 2026
+22 Abr, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 11 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+19:04    Pix    Pix Eduardo Portella dos Santos    Recebido    +30,00
+20:32    Pix    Pix MARCO RAFAELO PISONI    Recebido    +30,00   
+Saldo do dia    + 1.521,86
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+00:47    Depósito de vendas    Vendas    Depósito InfinitePay    +29,59
+06:52    Pix    Pix CXBX PATRIMONIAL LTDA    Enviado    -30,00
+19:49    Pix    Pix CXBX PATRIMONIAL LTDA    Recebido    +36,00   
+Saldo do dia    + 1.557,45
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+10:24    Pix    Pix Luiz Eduardo Nobre da Silva Junior    Recebido    +30,00
+11:52    Pix    Pix Eduardo Portella dos Santos    Recebido    +61,00
+12:56    Pix    Pix Antonio Pietro Almeida    Recebido    +75,00
+13:09    Pix    Pix THALES DA SILVA    Recebido    +75,00
+13:43    Pix    Pix Juruna Antonio Rosa    Enviado    -220,00
+13:46    Pix    Pix CXBX PATRIMONIAL LTDA    Enviado    -30,00   
+Saldo do dia    + 1.548,45   
+22 Abr, 2026
+23 Abr, 2026
+24 Abr, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 12 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+17:07    Pix    Pix Eduardo Portella dos Santos    Enviado    -153,00
+20:46    Pix    Pix LUCAS MENDES    Recebido    +30,00   
+Saldo do dia    + 1.425,45
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+11:32    Pix    Pix Vinicius nicolodelli testoni    Enviado    -312,63
+12:25    Pix    Pix Rhuan Luigi Ramos Borges de Nogueira    Recebido    +15,00
+13:33    Pix    Pix 49.962.197 JOAO FELIPE SANTOS VANZELLA    Recebido    +15,00
+13:51    Pix    Pix SOFIA HECKMANN ARSAND    Recebido    +5,00
+14:15    Pix    Pix Rhuan Luigi Ramos Borges de Nogueira    Recebido    +15,00
+14:46    Pix    Pix DIEGO DE ANDRADE NUNEZ    Recebido    +20,00
+14:47    Pix    Pix PATRICK C SILVA    Recebido    +15,00
+14:51    Pix    Pix MAURICIO THUROW LEVIEN    Recebido    +15,00
+14:55    Pix    Pix PEDRO CEZAR KOPITTKE    Recebido    +20,00
+15:00    Pix    Pix Leo Fogliato Santana    Recebido    +15,00
+15:09    Pix    Pix AUGUSTO O CONTE JR    Recebido    +35,00
+15:10    Pix    Pix AUGUSTO O CONTE JR    Recebido    +5,00
+15:20    Pix    Pix DIEGO DE ANDRADE NUNEZ    Recebido    +20,00
+15:20    Pix    Pix PEDRO FRANCO FREITAS PEREIRA    Recebido    +15,00   
+25 Abr, 2026
+26 Abr, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 13 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+15:21    Pix    Pix DIEGO DE ANDRADE NUNEZ    Recebido    +5,00
+15:28    Pix    Pix LUIZ EDUARDO CAMPESATO ROCHA    Recebido    +15,00
+15:29    Pix    Pix PEDRO CEZAR KOPITTKE    Recebido    +15,00
+15:45    Pix    Pix PEDRO FRANCO FREITAS PEREIRA    Recebido    +15,00
+15:48    Pix    Pix GUSTAVO VIEIRA RIOS    Recebido    +40,00
+17:30    Pix    Pix THIAGO JARDIM FAGUNDES    Recebido    +54,00
+18:28    Pix    Pix AUGUSTO O CONTE JR    Recebido    +20,00
+18:34    Pix    Pix DIEGO DE ANDRADE NUNEZ    Recebido    +25,00
+18:48    Pix    Pix LUIZ EDUARDO CAMPESATO ROCHA    Recebido    +40,00
+18:49    Pix    Pix AUGUSTO O CONTE JR    Recebido    +15,00
+18:56    Pix    Pix Clairton da Silva Ribas    Recebido    +15,00
+19:30    Pix    Pix Matheus da Silva Rodrigues    Recebido    +54,00
+19:37    Pix    Pix JOAO VITOR AMORIM REMIAO    Recebido    +15,00
+21:26    Pix    Pix Maurício de Souza Siegle    Recebido    +15,00
+22:04    Pix    Pix Rhuan Luigi Ramos Borges de Nogueira    Enviado    -25,00   
+Saldo do dia    + 1.640,82
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+01:45    Depósito de vendas    Vendas    Depósito InfinitePay    +289,66
+01:45    Depósito de vendas    Vendas    Depósito InfinitePay    +563,79   
+26 Abr, 2026
+27 Abr, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 14 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+02:40    Depósito de vendas    Vendas    Depósito InfinitePay    +29,22
+02:40    Depósito de vendas    Vendas    Depósito InfinitePay    +836,36
+02:40    Depósito de vendas    Vendas    Depósito InfinitePay    +251,47   
+Saldo do dia    + 3.611,32
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+17:39    Pix    Pix Guilherme Pietro Almeida    Recebido    +20,00   
+Saldo do dia    + 3.631,32
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+01:08    Pix    Pix Eduardo Portella dos Santos    Recebido    +235,00
+15:26    Pix    Pix GUILHERME D S JACQUES    Recebido    +255,00   
+Saldo do dia    + 4.121,32
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+17:01    Pix    Pix PEDRO EMILIO BAZZANELLA DE AZEVEDO    Enviado    -100,00   
+Saldo do dia    + 4.021,32
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+14:13    Pix    Pix Dalmir Peres    Enviado    -987,76   
+Saldo do dia    + 3.033,56   
+27 Abr, 2026
+28 Abr, 2026
+01 Mai, 2026
+02 Mai, 2026
+04 Mai, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 15 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+09:47    Pix    Pix Dalmir Peres    Enviado    -997,60   
+Saldo do dia    + 2.035,96
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+09:11    Pix    Pix MARIANA DA ROCHA PERES    Enviado    -400,00   
+Saldo do dia    + 1.635,96
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+08:01    Pix    Pix Eduardo Portella dos Santos    Enviado    -222,00
+19:09    Pix    Pix Vinicius nicolodelli testoni    Enviado    -121,79
+19:11    Pix    Pix DISKNET TI LTDA    Enviado    -109,90
+22:25    Pix    Pix Leonardo Santos da Costa    Recebido    +105,50   
+Saldo do dia    + 1.287,77
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+16:36    Pix    Pix DIEGO DE ANDRADE NUNEZ    Recebido    +20,00
+16:53    Pix    Pix Giovanni Zanco Gaiatto    Recebido    +15,00
+17:18    Pix    Pix LUCAS MENDES    Recebido    +15,00
+17:27    Pix    Pix PEDRO CARPES DE CAMARGO    Recebido    +20,00
+17:34    Pix    Pix Giovanni Zanco Gaiatto    Recebido    +15,00
+17:37    Pix    Pix Rhuan Luigi Ramos Borges de Nogueira    Recebido    +15,00   
+06 Mai, 2026
+08 Mai, 2026
+09 Mai, 2026
+10 Mai, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 16 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+17:37    Pix    Pix DIEGO DE ANDRADE NUNEZ    Recebido    +20,00
+17:43    Pix    Pix LUCAS MENDES    Recebido    +15,00
+18:14    Pix    Pix PEDRO CARPES DE CAMARGO    Recebido    +20,00
+18:15    Pix    Pix Richard Fontoura Da Silva    Recebido    +15,00
+18:21    Pix    Pix EDUARDO VIEIRA DA ROSA    Recebido    +20,00
+18:29    Pix    Pix DIEGO DE ANDRADE NUNEZ    Recebido    +20,00
+18:30    Pix    Pix LUCAS MENDES    Recebido    +15,00
+19:08    Pix    Pix LUCAS MENDES    Recebido    +20,00
+19:09    Pix    Pix PEDRO CARPES DE CAMARGO    Recebido    +20,00   
+Saldo do dia    + 1.552,77
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+01:51    Depósito de vendas    Vendas    Depósito InfinitePay    +280,07
+01:51    Depósito de vendas    Vendas    Depósito InfinitePay    +39,45
+02:41    Depósito de vendas    Vendas    Depósito InfinitePay    +233,46
+02:41    Depósito de vendas    Vendas    Depósito InfinitePay    +924,34
+06:46    Pix    Pix COMPANHIA ESTADUAL DE DISTRIBUICAO DE ENERGIA
+ELETRICA - CEEE-D    Enviado    -638,30
+09:50    Boleto    CEEE RS DISTRIBUICAO    Pagamento efetuado    -145,47
+12:13    Pix    Pix Antonio Pietro Almeida    Enviado    -147,00
+17:42    Pix    Pix Eduardo Portella dos Santos    Enviado    -50,00   
+10 Mai, 2026
+11 Mai, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 17 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+18:15    Boleto    DMAE PORTO ALEGRE    Pagamento efetuado    -138,60
+19:55    Pix    Pix Antonio Pietro Almeida    Recebido    +30,00
+19:57    Pix    Pix Pedro Costa de Barros    Recebido    +30,00
+21:02    Pix    Pix Carjan Salerno Rocha    Recebido    +60,00
+21:58    Pix    Pix Felipe Steemburgo de Azevedo    Recebido    +15,00
+22:23    Pix    Pix Leonardo Santos da Costa    Recebido    +60,00
+23:41    Pix    Pix CXBX PATRIMONIAL LTDA    Recebido    +75,00   
+Saldo do dia    + 2.180,72
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+06:00    Pix    Pix CXBX PATRIMONIAL LTDA    Enviado    -100,00
+08:34    Pix    Pix EDUARDO PORTELLA DOS SANTOS    Recebido    +15,00
+19:19    Pix    Pix EDUARDO PORTELLA DOS SANTOS    Recebido    +182,00
+22:24    Pix    Pix Eduardo Portella dos Santos    Enviado    -552,00   
+Saldo do dia    + 1.725,72
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+09:58    Pix    Pix Rodrigo Heidrich da Silva Schaefer    Recebido    +60,00
+18:00    Pix    Pix CXBX PATRIMONIAL LTDA    Enviado    -60,00   
+Saldo do dia    + 1.725,72   
+11 Mai, 2026
+13 Mai, 2026
+15 Mai, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 18 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+15:38    Pix    Pix Fabrício Nascimento de Souza    Recebido    +15,00   
+Saldo do dia    + 1.740,72
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+17:41    Pix    Pix Yan Mussnich Rotta Gomes de Assuncao    Recebido    +48,00
+18:22    Pix    Pix AUGUSTO O CONTE JR    Recebido    +59,00
+21:31    Pix    Pix Gustavo Oliveira de Oliveira    Recebido    +6,00
+21:48    Pix    Pix BRAYAN GONCALVES SOUZA DA SILVA    Recebido    +15,00   
+Saldo do dia    + 1.868,72
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+02:34    Depósito de vendas    Vendas    Depósito InfinitePay    +248,61
+02:34    Depósito de vendas    Vendas    Depósito InfinitePay    +142,08
+08:29    Pix    Pix Heitor Ribeiro    Recebido    +51,00
+15:26    Pix    Pix MARCELA MATHIAS CALDEIRA MAY    Recebido    +116,00
+22:05    Pix    Pix Dalmir Peres    Enviado    -1.000,00   
+Saldo do dia    + 1.426,41
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+15:45    Pix    Pix Dalmir Peres    Enviado    -984,00   
+Saldo do dia    + 442,41   
+16 Mai, 2026
+17 Mai, 2026
+18 Mai, 2026
+19 Mai, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 19 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+11:41    Boleto    DAS - SIMPLES NACIONAL    Pagamento efetuado    -164,10
+19:10    Pix    Pix Rhuan Luigi Ramos Borges de Nogueira    Recebido    +15,00
+19:29    Pix    Pix LUCAS MENDES    Recebido    +18,00
+19:31    Pix    Pix Fabrício Nascimento de Souza    Recebido    +15,00
+19:54    Pix    Pix Luiz Henrique Viegas Machado    Recebido    +20,00
+20:08    Pix    Pix FELIPE STEEMBURGO DE AZEVEDO    Recebido    +66,00
+20:19    Pix    Pix Lucas Gabriel Mello de Souza    Recebido    +6,00
+20:35    Pix    Pix LUCAS MENDES    Recebido    +18,00   
+Saldo do dia    + 436,31
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+00:31    Pix    Pix LUCAS MENDES    Recebido    +15,00
+00:47    Depósito de vendas    Vendas    Depósito InfinitePay    +278,15
+00:47    Depósito de vendas    Vendas    Depósito InfinitePay    +17,75
+01:47    Depósito de vendas    Vendas    Depósito InfinitePay    +214,07
+01:47    Depósito de vendas    Vendas    Depósito InfinitePay    +120,69
+03:34    Pix    Pix THALES DA SILVA    Recebido    +36,00
+09:10    Pix    Pix Rodrigo Heidrich da Silva Schaefer    Recebido    +50,00
+09:25    Pix    Pix GABRIEL EMIL CAUDURO    Recebido    +155,00   
+20 Mai, 2026
+21 Mai, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 20 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+12:48    Pix    Pix Carjan Salerno Rocha    Recebido    +10,00
+13:28    Pix    Pix MARCELA MATHIAS CALDEIRA MAY    Recebido    +10,00
+16:59    Pix    Pix FILIPE CAREGNATO GARCIA    Recebido    +80,00   
+Saldo do dia    + 1.422,97
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+00:46    Depósito de vendas    Vendas    Depósito InfinitePay    +94,31
+00:46    Depósito de vendas    Vendas    Depósito InfinitePay    +44,37
+21:24    Pix    Pix Eduardo Portella dos Santos    Recebido    +36,00
+21:41    Pix    Pix JACKSON DE MORAES PRADO    Recebido    +187,00   
+Saldo do dia    + 1.784,65
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+12:42    Pix    Pix DISTRIBUIDORA LULU LTDA    Enviado    -68,90
+15:10    Pix    Pix Christhyan Martins Da Silva Freitas    Recebido    +6,00
+16:03    Pix    Pix Clairton da Silva Ribas    Recebido    +15,00
+16:29    Pix    Pix Christhyan Martins Da Silva Freitas    Recebido    +15,00
+16:56    Pix    Pix AUGUSTO O CONTE JR    Recebido    +20,00
+17:01    Pix    Pix JULIANO SANTOS DA SILVA    Recebido    +15,00
+17:16    Pix    Pix Felipe Pereira Outeiro    Recebido    +15,00
+17:49    Pix    Pix DIEGO DE ANDRADE NUNEZ    Recebido    +15,00   
+21 Mai, 2026
+22 Mai, 2026
+23 Mai, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 21 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+17:52    Pix    Pix Fabrício Nascimento de Souza    Recebido    +15,00
+17:58    Pix    Pix AUGUSTO O CONTE JR    Recebido    +20,00
+18:06    Pix    Pix Felipe Pereira Outeiro    Recebido    +15,00
+18:24    Pix    Pix DIEGO DE ANDRADE NUNEZ    Recebido    +20,00
+18:34    Pix    Pix DIEGO DE ANDRADE NUNEZ    Recebido    +20,00
+18:42    Pix    Pix AUGUSTO O CONTE JR    Recebido    +20,00
+18:48    Pix    Pix WALLACE BARCELLOS DOS SANTOS    Recebido    +15,00
+20:06    Pix    Pix WALLACE BARCELLOS DOS SANTOS    Recebido    +15,00
+21:13    Pix    Pix AUGUSTO O CONTE JR    Recebido    +18,00
+21:23    Pix    Pix DIEGO DE ANDRADE NUNEZ    Recebido    +20,00
+21:54    Pix    Pix MAURICIO THUROW LEVIEN    Recebido    +15,00
+22:23    Pix    Pix Felipe Pereira Outeiro    Recebido    +15,00
+22:30    Pix    Pix MAURICIO THUROW LEVIEN    Recebido    +15,00   
+Saldo do dia    + 2.039,75
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+15:20    Pix    Pix MARIANA DA ROCHA PERES    Enviado    -200,00   
+Saldo do dia    + 1.839,75   
+23 Mai, 2026
+24 Mai, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 22 de 23   
+===PAGE_BREAK===
+Relatório de movimentações    60.982.530 ARIEL RIBEIRO CARVALHO - CNPJ: 60.982.530/0001-04
+CLOUDWALK - 0001 - 18703876-5   
+Data    Hora    Tipo de transação    Nome    Detalhe    Valor (R$)   
+01:21    Depósito de vendas    Vendas    Depósito InfinitePay    +19,73
+01:21    Depósito de vendas    Vendas    Depósito InfinitePay    +436,87
+02:39    Depósito de vendas    Vendas    Depósito InfinitePay    +373,98
+02:39    Depósito de vendas    Vendas    Depósito InfinitePay    +97,84   
+Saldo do dia    + 2.768,17   
+25 Mai, 2026   
+A Central de Ajuda está disponível todos os dias pelo chat no app, pelo e-mail ajuda@infinitepay.io ou de segunda a sexta das 09h às 17h, no 0800 591 7207    Página 23 de 23   
