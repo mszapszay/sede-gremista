@@ -508,6 +508,10 @@ body.viewer .admin-only{display:none!important}
 <div id="tab-calendario" class="page">
   <div class="page-hdr">
     <div class="page-title">📅 Calendário 2026</div>
+    <div class="flex admin-only">
+      <button class="btn btn-primary btn-sm" onclick="abrirModalCalEvento('')">+ Novo Evento</button>
+      <button class="btn btn-pur btn-sm" onclick="abrirModalCalEvento('','tarefa')">☑ Nova Tarefa</button>
+    </div>
   </div>
   <div class="sc-tabs" id="sedeCalTabs"></div>
   <div class="sc-cal-box">
@@ -813,6 +817,40 @@ body.viewer .admin-only{display:none!important}
   </div>
 </div>
 
+<!-- MODAL CALENDÁRIO — EVENTO / TAREFA -->
+<div class="mover" id="mCalEvento">
+  <div class="modal" style="max-width:480px">
+    <h3 id="mCalTit">📅 Novo Evento</h3>
+    <input type="hidden" id="calId">
+    <div class="fg">
+      <label>Tipo</label>
+      <select id="calTipo" onchange="_calTipoChange()">
+        <option value="evento">📅 Evento</option>
+        <option value="tarefa">☑ Tarefa</option>
+      </select>
+    </div>
+    <div class="fg"><label>Título *</label><input type="text" id="calTitulo" placeholder="Descrição do evento ou tarefa"></div>
+    <div class="fgrow">
+      <div class="fg"><label>Data *</label><input type="date" id="calData"></div>
+      <div class="fg" id="calHorarioFg"><label>Horário</label><input type="time" id="calHorario"></div>
+    </div>
+    <div class="fg">
+      <label>Categoria</label>
+      <select id="calCat">
+        <option value="gremio">⚽ Grêmio</option>
+        <option value="selecao">🇧🇷 Seleção</option>
+        <option value="financeiro">💰 Financeiro</option>
+        <option value="outros">📌 Outros</option>
+      </select>
+    </div>
+    <div class="fg"><label>Observação</label><textarea id="calObs" rows="2" placeholder="Detalhe opcional…"></textarea></div>
+    <div class="mactions">
+      <button class="btn btn-ghost" onclick="fecharModal('mCalEvento')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarEventoCal()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
 <!-- MENU MENSALIDADES -->
 <div id="mensMenu"></div>
 
@@ -1041,7 +1079,8 @@ function dadosPadrao(){
     membros,mensalidades,comandas:{},estoque:[],
     jogos:[],despesas:[],importKeys:[],
     extratoBar:[],extratoHolding:[],
-    saldoAberturaBar:0,saldoAberturaHolding:0
+    saldoAberturaBar:0,saldoAberturaHolding:0,
+    eventosCal:{}
   };
 }
 
@@ -1067,6 +1106,7 @@ function parseFromFirebase(data){
   r.extratoHolding=toArr(data.extratoHolding).map(t=>t&&t.mesMensArr&&!Array.isArray(t.mesMensArr)?{...t,mesMensArr:toArr(t.mesMensArr)}:t);
   r.saldoAberturaBar=data.saldoAberturaBar||0;
   r.saldoAberturaHolding=data.saldoAberturaHolding||0;
+  r.eventosCal=data.eventosCal||{};
   return r;
 }
 
@@ -2767,8 +2807,15 @@ function _sedeGetEventsForDay(ds) {
     .filter(t => !hidden.includes(t))
     .map(t => ({ id:'_s_'+ds+'_'+t, text:t, type:'seed', cat:sedeCat(t) }));
 
-  // User events
-  const userEvs = (_sedeCalData[ds] || []).map(e => ({ ...e, type:'user' }));
+  // User events — lê do Firebase (DB.eventosCal) se disponível, senão do localStorage (legado)
+  let userEvs = [];
+  if (DB && DB.eventosCal) {
+    userEvs = Object.entries(DB.eventosCal)
+      .filter(([,e]) => e && e.date === ds)
+      .map(([id,e]) => ({ ...e, id, type: e.tipo||'evento' }));
+  } else {
+    userEvs = (_sedeCalData[ds] || []).map(e => ({ ...e, type:'user' }));
+  }
 
   const all = [...seedEvs, ...userEvs, ...chkEvs];
   all.sort((a,b) => {
@@ -2875,6 +2922,10 @@ function renderSedeCalDetail(ds) {
   const [y,m,d] = ds.split('-');
   const dow = _SEDE_DOW_FULL[new Date(Number(y),Number(m)-1,Number(d)).getDay()];
   let h = `<div class="sc-det-day">${dow}, ${d}/${m}/${y}</div>`;
+  const addBtn = IS_ADMIN
+    ? `<button class="btn btn-ghost btn-xs" style="margin-left:auto" onclick="abrirModalCalEvento('${ds}')">+ Evento</button><button class="btn btn-pur btn-xs" onclick="abrirModalCalEvento('${ds}','tarefa')">☑ Tarefa</button>`
+    : '';
+  h = `<div class="sc-det-day" style="display:flex;align-items:center;gap:8px">${dow}, ${d}/${m}/${y}${addBtn}</div>`;
   if (!evs.length) {
     h += '<div class="sc-det-empty">Nenhum evento neste dia.</div>';
   } else {
@@ -2882,9 +2933,16 @@ function renderSedeCalDetail(ds) {
       const C = SEDE_CAL_CATS[ev.cat||'outros'];
       if (ev.type === 'checklist') {
         h += `<div class="sc-det-ev"><label style="display:flex;align-items:flex-start;gap:7px;cursor:pointer;width:100%"><input type="checkbox" style="margin-top:3px;flex-shrink:0;accent-color:${C.dot};width:14px;height:14px;cursor:pointer" ${ev.done?'checked':''} onchange="toggleSedeCTask('${ev.chkMonth}','${ev.tid}')"><div class="sc-det-body"><div class="sc-det-text" style="${ev.done?'text-decoration:line-through;opacity:.45':''}">${ev.text}</div><div class="sc-det-lbl" style="color:${C.dot}">${C.label}</div></div></label></div>`;
+      } else if (ev.tipo === 'tarefa') {
+        // Tarefa customizada (Firebase)
+        const done = !!ev.done;
+        const adminAct = IS_ADMIN ? `<div style="display:flex;gap:3px;margin-left:auto;flex-shrink:0"><button class="btn btn-ghost btn-xs" onclick="editarEventoCal('${ev.id}')">✏️</button><button class="btn btn-danger btn-xs" onclick="excluirEventoCal('${ev.id}')">🗑</button></div>` : '';
+        h += `<div class="sc-det-ev"><label style="display:flex;align-items:flex-start;gap:7px;cursor:pointer;flex:1"><input type="checkbox" style="margin-top:3px;flex-shrink:0;accent-color:${C.dot};width:14px;height:14px;cursor:pointer" ${done?'checked':''} onchange="toggleTarefaCal('${ev.id}')"><div class="sc-det-body"><div class="sc-det-text" style="${done?'text-decoration:line-through;opacity:.45':''}">${ev.text}</div><div class="sc-det-lbl" style="color:${C.dot}">${C.label}${ev.obs?` · <span style="font-weight:400">${ev.obs}</span>`:''}</div></div></label>${adminAct}</div>`;
       } else {
+        // Evento normal (user ou seed)
         const timeBadge = ev.time ? `<span style="font-size:10px;font-weight:700;color:#fff;background:#2563eb;border-radius:3px;padding:1px 5px;margin-right:5px;flex-shrink:0">${ev.time}</span>` : '';
-        h += `<div class="sc-det-ev"><span class="sc-det-dot" style="background:${C.dot}"></span><div class="sc-det-body"><div class="sc-det-text">${timeBadge}${ev.text}</div><div class="sc-det-lbl" style="color:${C.dot}">${C.label}</div></div></div>`;
+        const adminAct = IS_ADMIN && ev.tipo === 'evento' ? `<div style="display:flex;gap:3px;margin-left:auto;flex-shrink:0"><button class="btn btn-ghost btn-xs" onclick="editarEventoCal('${ev.id}')">✏️</button><button class="btn btn-danger btn-xs" onclick="excluirEventoCal('${ev.id}')">🗑</button></div>` : '';
+        h += `<div class="sc-det-ev"><span class="sc-det-dot" style="background:${C.dot}"></span><div class="sc-det-body"><div class="sc-det-text">${timeBadge}${ev.text}</div><div class="sc-det-lbl" style="color:${C.dot}">${C.label}${ev.obs?` · <span style="font-weight:400">${ev.obs}</span>`:''}</div></div>${adminAct}</div>`;
       }
     });
   }
@@ -2978,6 +3036,91 @@ function renderSedeDashPendencias() {
 }
 
 
+
+// ─── CALENDÁRIO — CRUD DE EVENTOS E TAREFAS ───
+
+let _calEditId = null;
+
+function _calTipoChange() {
+  const tipo = document.getElementById('calTipo').value;
+  const horFg = document.getElementById('calHorarioFg');
+  const tit   = document.getElementById('mCalTit');
+  if (tipo === 'tarefa') {
+    horFg.style.display = 'none';
+    tit.textContent = _calEditId ? '✏️ Editar Tarefa' : '☑ Nova Tarefa';
+  } else {
+    horFg.style.display = '';
+    tit.textContent = _calEditId ? '✏️ Editar Evento' : '📅 Novo Evento';
+  }
+}
+
+function abrirModalCalEvento(ds, tipo) {
+  if (!IS_ADMIN) return;
+  _calEditId = null;
+  document.getElementById('calId').value = '';
+  document.getElementById('calTipo').value = tipo || 'evento';
+  document.getElementById('calTitulo').value = '';
+  document.getElementById('calData').value = ds || new Date().toISOString().slice(0, 10);
+  document.getElementById('calHorario').value = '';
+  document.getElementById('calCat').value = 'outros';
+  document.getElementById('calObs').value = '';
+  _calTipoChange();
+  abrirModal('mCalEvento');
+}
+
+function editarEventoCal(id) {
+  if (!IS_ADMIN) return;
+  const ev = DB.eventosCal[id];
+  if (!ev) return;
+  _calEditId = id;
+  document.getElementById('calId').value = id;
+  document.getElementById('calTipo').value = ev.tipo || 'evento';
+  document.getElementById('calTitulo').value = ev.text || '';
+  document.getElementById('calData').value = ev.date || '';
+  document.getElementById('calHorario').value = ev.time || '';
+  document.getElementById('calCat').value = ev.cat || 'outros';
+  document.getElementById('calObs').value = ev.obs || '';
+  _calTipoChange();
+  abrirModal('mCalEvento');
+}
+
+function salvarEventoCal() {
+  if (!IS_ADMIN) return;
+  const text = document.getElementById('calTitulo').value.trim();
+  const date = document.getElementById('calData').value;
+  if (!text || !date) { alert('Preencha o título e a data.'); return; }
+  const tipo = document.getElementById('calTipo').value;
+  const time = tipo === 'evento' ? (document.getElementById('calHorario').value || '') : '';
+  const cat  = document.getElementById('calCat').value || 'outros';
+  const obs  = document.getElementById('calObs').value.trim();
+  const id   = _calEditId || uid();
+  // Preserva o estado "done" se estiver editando uma tarefa
+  const donePrev = _calEditId && DB.eventosCal[_calEditId] ? (DB.eventosCal[_calEditId].done || false) : false;
+  if (!DB.eventosCal) DB.eventosCal = {};
+  DB.eventosCal[id] = { id, date, text, tipo, time, cat, obs, done: tipo === 'tarefa' ? donePrev : false };
+  fecharModal('mCalEvento');
+  salvarDB();
+  // Re-renderiza calendário e detalhe do dia
+  renderSedeCalendar();
+  if (_sedeCalSel === date || !_sedeCalSel) selectSedeDay(date);
+}
+
+function excluirEventoCal(id) {
+  if (!IS_ADMIN) return;
+  if (!confirm('Excluir este item do calendário?')) return;
+  if (DB.eventosCal) delete DB.eventosCal[id];
+  salvarDB();
+  renderSedeCalendar();
+  if (_sedeCalSel) renderSedeCalDetail(_sedeCalSel);
+}
+
+function toggleTarefaCal(id) {
+  if (!DB.eventosCal || !DB.eventosCal[id]) return;
+  DB.eventosCal[id].done = !DB.eventosCal[id].done;
+  salvarDB();
+  renderSedeCalendar();
+  if (_sedeCalSel) renderSedeCalDetail(_sedeCalSel);
+}
 
 // ── ESTOQUE ──
 const ESTOQUE_LOCAIS = [
