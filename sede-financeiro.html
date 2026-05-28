@@ -639,6 +639,7 @@ body.viewer .admin-only{display:none!important}
       <button class="btn btn-ghost btn-sm admin-only" onclick="abrirAberturaBar()">⚙️ Saldo abertura</button>
       <button class="btn btn-primary btn-sm admin-only" onclick="document.getElementById('fileBarXlsx').click()">📥 Importar XLSX</button>
       <button class="btn btn-grn btn-sm admin-only" onclick="abrirModalTxnManual('bar')">+ Lançamento manual</button>
+      <button class="btn btn-ghost btn-sm admin-only" onclick="limparDuplicatas('bar')" title="Detectar e remover transações duplicadas">🧹 Duplicatas</button>
       <input type="file" id="fileBarXlsx" accept=".xlsx,.xls" style="display:none" onchange="importarArquivoBar(this)">
     </div>
   </div>
@@ -671,6 +672,7 @@ body.viewer .admin-only{display:none!important}
       <button class="btn btn-ghost btn-sm admin-only" onclick="abrirAberturaHolding()">⚙️ Saldo abertura</button>
       <button class="btn btn-primary btn-sm admin-only" onclick="document.getElementById('fileHoldingXlsx').click()">📥 Importar XLSX</button>
       <button class="btn btn-grn btn-sm admin-only" onclick="abrirModalTxnManual('holding')">+ Lançamento manual</button>
+      <button class="btn btn-ghost btn-sm admin-only" onclick="limparDuplicatas('holding')" title="Detectar e remover transações duplicadas">🧹 Duplicatas</button>
       <input type="file" id="fileHoldingXlsx" accept=".xlsx,.xls" style="display:none" onchange="importarArquivoHolding(this)">
     </div>
   </div>
@@ -1394,6 +1396,16 @@ function fmtDate(v){
   if(m)return`${m[3]}-${m[2]}-${m[1]}`;
   return s;
 }
+function fmtTime(v){
+  if(v instanceof Date){
+    const h=String(v.getUTCHours()).padStart(2,'0');
+    const m=String(v.getUTCMinutes()).padStart(2,'0');
+    return`${h}:${m}`;
+  }
+  const s=String(v||'').trim();
+  const mt=s.match(/(\d{1,2}):(\d{2})/);
+  return mt?`${mt[1].padStart(2,'0')}:${mt[2]}`:'';
+}
 
 // ─── TABS ───
 const TAB_RENDERERS={
@@ -1977,11 +1989,12 @@ function processarXLSXBar(wb){
   const rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,cellDates:true,defval:''});
   if(!rows.length){alert('Arquivo vazio.');return;}
   if(!(DB.importKeys instanceof Set))DB.importKeys=new Set(DB.importKeys||[]);
-  const txns=[];
+  const txns=[];let skipsDup=0;
   for(let r=1;r<rows.length;r++){
     const row=rows[r];
     if(!row||row.length<6)continue;
-    const dataVal=row[0],hora=String(row[1]||'').trim();
+    const dataVal=row[0];
+    const hora=fmtTime(row[1]);
     const tipo=String(row[2]||'').trim();
     const nomeRaw=String(row[3]||'').trim();
     const detalhe=String(row[4]||'').trim();
@@ -1991,19 +2004,21 @@ function processarXLSXBar(wb){
     let valor;
     if(typeof valorRaw==='number'){valor=valorRaw;}
     else{const s=String(valorRaw).trim().replace(/R\$\s*/,'');
-      // Brasileiro "1.800,00": remove pontos (milhar) e troca vírgula → ponto
-      // Internacional "180.00": mantém ponto decimal, só remove não-numéricos
       valor=parseFloat(s.includes(',')?s.replace(/\./g,'').replace(',','.'):s.replace(/[^\d.]/g,''))||0;}
     if(valor===0)continue;
     const dir=valor<0?'saida':'entrada';
     const nome=nomeRaw.replace(/^Pix\s+/i,'').trim();
-    const key=`bar|${data}|${hora}|${Math.abs(valor).toFixed(2)}|${nomeRaw}`;
-    if(DB.importKeys.has(key))continue;
+    const absVal=Math.abs(valor);
+    const key=`bar|${data}|${hora}|${absVal.toFixed(2)}|${nomeRaw}`;
+    // 1ª barreira: chave de importação
+    if(DB.importKeys.has(key)){skipsDup++;continue;}
+    // 2ª barreira: conteúdo (proteção contra mudança de formato de chave)
+    if(DB.extratoBar.some(e=>e.data===data&&e.dir===dir&&Math.abs(e.valor-absVal)<0.005&&e.nome===nome)){skipsDup++;continue;}
     const cat=categorizarBar(tipo,nome,detalhe,valor);
-    txns.push({id:uid(),data,hora,tipo,nome,detalhe,valor:Math.abs(valor),dir,cat:cat.cat,desc:cat.desc,key});
+    txns.push({id:uid(),data,hora,tipo,nome,detalhe,valor:absVal,dir,cat:cat.cat,desc:cat.desc,key});
   }
-  if(!txns.length){alert('Nenhuma transação nova encontrada.');return;}
-  mostrarPreview(txns,'bar');
+  if(!txns.length){alert('Nenhuma transação nova encontrada.'+(skipsDup?` ${skipsDup} duplicata(s) ignorada(s).`:''));return;}
+  mostrarPreview(txns,'bar',skipsDup);
 }
 
 function categorizarBar(tipo,nome,detalhe,valor){
@@ -2059,7 +2074,7 @@ function processarXLSXHolding(wb){
       break;
     }
   }
-  const txns=[];
+  const txns=[];let skipsDup=0;
   for(let r=(headerRow>=0?headerRow+1:1);r<rows.length;r++){
     const row=rows[r];if(!row||!row.length)continue;
     const dataVal=row[colData];
@@ -2073,19 +2088,20 @@ function processarXLSXHolding(wb){
     let valor;
     if(typeof valorRaw==='number'){valor=Math.abs(valorRaw);}
     else{const s=String(valorRaw).trim().replace(/R\$\s*/,'');
-      // Brasileiro "1.800,00": remove pontos (milhar) e troca vírgula → ponto
-      // Internacional "180.00": mantém ponto decimal, só remove não-numéricos
       valor=Math.abs(parseFloat(s.includes(',')?s.replace(/\./g,'').replace(',','.'):s.replace(/[^\d.]/g,''))||0);}
     if(!valor)continue;
     const dir=/entrada|recebido|créd/i.test(tipoStr)?'entrada':'saida';
     const key=`holding|${data}|${valor.toFixed(2)}|${desc}`;
-    if(DB.importKeys.has(key))continue;
+    // 1ª barreira: chave de importação
+    if(DB.importKeys.has(key)){skipsDup++;continue;}
+    // 2ª barreira: conteúdo (proteção contra mudança de formato de chave)
+    if(DB.extratoHolding.some(e=>e.data===data&&e.dir===dir&&Math.abs(e.valor-valor)<0.005&&e.desc===desc)){skipsDup++;continue;}
     const cat=categorizarHolding(mov,desc,obs,tipoStr);
     const mb=cat.cat==='mensalidade'?matchMembro(desc):null;
     txns.push({id:uid(),data,mov,desc,obs,tipo:tipoStr,valor,dir,cat:cat.cat,membroId:mb?mb.id:null,membroNome:mb?mb.nome:'',key});
   }
-  if(!txns.length){alert('Nenhuma transação nova encontrada.');return;}
-  mostrarPreview(txns,'holding');
+  if(!txns.length){alert('Nenhuma transação nova encontrada.'+(skipsDup?` ${skipsDup} duplicata(s) ignorada(s).`:''));return;}
+  mostrarPreview(txns,'holding',skipsDup);
 }
 
 function categorizarHolding(mov,desc,obs,tipo){
@@ -2120,10 +2136,11 @@ function matchMembro(nome){
 // ─── PREVIEW & CONFIRMAR ───
 let _importPendente=null;
 
-function mostrarPreview(txns,tipo){
+function mostrarPreview(txns,tipo,skipsDup){
   _importPendente={txns,tipo};
   document.getElementById('mPrevTit').textContent=tipo==='bar'?'Prévia – Conta Bar (InfinitePay)':'Prévia – Conta Holding (PicPay)';
-  document.getElementById('prevResumo').innerHTML=`<strong>${txns.length}</strong> nova(s) transação(ões) encontrada(s).`;
+  const dupInfo=skipsDup?` <span style="color:var(--txt2);font-size:.8rem">(${skipsDup} duplicata(s) ignorada(s))</span>`:'';
+  document.getElementById('prevResumo').innerHTML=`<strong>${txns.length}</strong> nova(s) transação(ões) encontrada(s).${dupInfo}`;
   const thead=document.querySelector('#prevTable thead tr');
   const tbody=document.querySelector('#prevTable tbody');
   if(tipo==='bar'){
@@ -2173,6 +2190,28 @@ function confirmarImport(){
   alert(`✓ ${txns.length} transação(ões) importada(s)${extra}!`);
   if(tipo==='bar')renderContaBar();else{renderContaHolding();renderMensalidades();}
   atualizarHeader();
+}
+
+// ─── LIMPEZA DE DUPLICATAS ───
+function limparDuplicatas(conta){
+  if(!IS_ADMIN)return;
+  const arr=conta==='bar'?DB.extratoBar:DB.extratoHolding;
+  const seen=new Set();const antes=arr.length;
+  const limpo=arr.filter(t=>{
+    // Chave de dedup por conteúdo (mantém a primeira ocorrência)
+    const k=conta==='bar'
+      ?`${t.data}|${t.dir}|${(t.valor||0).toFixed(2)}|${t.nome||''}`
+      :`${t.data}|${t.dir}|${(t.valor||0).toFixed(2)}|${t.desc||''}`;
+    if(seen.has(k))return false;
+    seen.add(k);return true;
+  });
+  const removidos=antes-limpo.length;
+  if(!removidos){alert(`Conta ${conta}: nenhuma duplicata encontrada.`);return;}
+  if(!confirm(`Encontradas ${removidos} duplicata(s) na conta ${conta}. Remover?`))return;
+  if(conta==='bar')DB.extratoBar=limpo;else DB.extratoHolding=limpo;
+  salvarDB();
+  if(conta==='bar')renderContaBar();else renderContaHolding();
+  alert(`✓ ${removidos} duplicata(s) removida(s) da conta ${conta}.`);
 }
 
 // Reconciliação automática (sem modal) — roda logo após importação da Holding.
