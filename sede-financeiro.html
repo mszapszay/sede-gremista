@@ -2054,18 +2054,61 @@ function confirmarImport(){
     txns.forEach(t=>{
       DB.importKeys.add(t.key);
       DB.extratoHolding.push({id:t.id,data:t.data,mov:t.mov,desc:t.desc,obs:t.obs,tipo:t.tipo,valor:t.valor,dir:t.dir,cat:t.cat,membroId:t.membroId||null});
-      // se mensalidade → atualizar grade
-      if(t.cat==='mensalidade'&&t.membroId){
-        const mes=getMes(t.data);
-        if(mes){if(!DB.mensalidades[t.membroId])DB.mensalidades[t.membroId]={};
-        if(!DB.mensalidades[t.membroId][mes])DB.mensalidades[t.membroId][mes]='pago';}
-      }
     });
   }
+  // Para holding: reconcilia mensalidades automaticamente antes de salvar
+  const reconc=(tipo==='holding')?_reconciliarAuto():{criados:0,meses:0};
   salvarDB();fecharModal('mPreview');_importPendente=null;
-  alert(`✓ ${txns.length} transação(ões) importada(s) com sucesso!`);
-  if(tipo==='bar')renderContaBar();else renderContaHolding();
+  const extra=reconc.meses?` · ${reconc.meses} mês(es) reconciliado(s) automaticamente`:'';
+  alert(`✓ ${txns.length} transação(ões) importada(s)${extra}!`);
+  if(tipo==='bar')renderContaBar();else{renderContaHolding();renderMensalidades();}
   atualizarHeader();
+}
+
+// Reconciliação automática (sem modal) — roda logo após importação da Holding.
+// Mesma lógica de reconciliarMensalidades()+confirmarReconciliar(), porém silenciosa.
+function _reconciliarAuto(){
+  if(!IS_ADMIN||!DB.extratoHolding||!DB.extratoHolding.length)return{criados:0,meses:0};
+  const TAXA=30;
+  const SKIP=/wise.*brasil|corretora.*cambio|transportes.*logistica|\bvtn\b/i;
+  const mens=DB.extratoHolding.filter(t=>
+    t.cat==='mensalidade'&&t.dir==='entrada'&&t.valor>=15&&!SKIP.test(t.desc||'')
+  );
+  if(!mens.length)return{criados:0,meses:0};
+
+  const byNorm={};
+  mens.forEach(t=>{
+    const norm=normNomeRec(t.desc||'');
+    if(!byNorm[norm])byNorm[norm]={nomeDisplay:t.desc,pagamentos:[]};
+    if(/[a-z]/.test(t.desc||''))byNorm[norm].nomeDisplay=t.desc;
+    byNorm[norm].pagamentos.push({data:(t.data||'').slice(0,7),valor:t.valor});
+  });
+
+  let criados=0,mesesMarcados=0;
+  for(const[norm,pessoa]of Object.entries(byNorm)){
+    const pags=pessoa.pagamentos.filter(p=>p.data).sort((a,b)=>a.data.localeCompare(b.data));
+    if(!pags.length)continue;
+    const mesesSet=new Set();
+    pags.forEach(p=>{
+      const n=Math.max(1,Math.round(p.valor/TAXA));
+      addMesesRec(p.data,n).forEach(m=>mesesSet.add(m));
+    });
+    const meses=[...mesesSet].sort();
+    if(!meses.length)continue;
+    let membro=DB.membros.find(m=>normNomeRec(m.nome)===norm);
+    let mbId=membro?membro.id:null;
+    if(!mbId){
+      mbId=uid();
+      DB.membros.push({id:mbId,nome:pessoa.nomeDisplay,status:'ativo',desde:meses[0]||''});
+      if(!DB.mensalidades[mbId])DB.mensalidades[mbId]={};
+      criados++;
+    }
+    if(!DB.mensalidades[mbId])DB.mensalidades[mbId]={};
+    meses.forEach(mes=>{
+      if(!DB.mensalidades[mbId][mes]){DB.mensalidades[mbId][mes]='pago';mesesMarcados++;}
+    });
+  }
+  return{criados,meses:mesesMarcados};
 }
 
 // ─── JOGOS ───
