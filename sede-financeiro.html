@@ -638,6 +638,7 @@ body.viewer .admin-only{display:none!important}
 <!-- barFiltroMes removido — substituído por abas abaixo -->
       <button class="btn btn-ghost btn-sm admin-only" onclick="abrirAberturaBar()">⚙️ Saldo abertura</button>
       <button class="btn btn-primary btn-sm admin-only" onclick="document.getElementById('fileBarXlsx').click()">📥 Importar XLSX</button>
+      <button class="btn btn-grn btn-sm admin-only" onclick="abrirModalTxnManual('bar')">+ Lançamento manual</button>
       <input type="file" id="fileBarXlsx" accept=".xlsx,.xls" style="display:none" onchange="importarArquivoBar(this)">
     </div>
   </div>
@@ -669,6 +670,7 @@ body.viewer .admin-only{display:none!important}
 <!-- holdingFiltroMes removido — substituído por abas abaixo -->
       <button class="btn btn-ghost btn-sm admin-only" onclick="abrirAberturaHolding()">⚙️ Saldo abertura</button>
       <button class="btn btn-primary btn-sm admin-only" onclick="document.getElementById('fileHoldingXlsx').click()">📥 Importar XLSX</button>
+      <button class="btn btn-grn btn-sm admin-only" onclick="abrirModalTxnManual('holding')">+ Lançamento manual</button>
       <input type="file" id="fileHoldingXlsx" accept=".xlsx,.xls" style="display:none" onchange="importarArquivoHolding(this)">
     </div>
   </div>
@@ -838,6 +840,34 @@ body.viewer .admin-only{display:none!important}
     <div class="mactions">
       <button class="btn btn-ghost" onclick="fecharModal('mCalEvento')">Cancelar</button>
       <button class="btn btn-primary" onclick="salvarEventoCal()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL LANÇAMENTO MANUAL -->
+<div class="mover" id="mTxnManual">
+  <div class="modal" style="max-width:460px">
+    <h3 id="mTxnManualTit">+ Lançamento Manual</h3>
+    <input type="hidden" id="txnManualConta">
+    <input type="hidden" id="txnManualId">
+    <div class="fgrow">
+      <div class="fg"><label>Data *</label><input type="date" id="txnManualData"></div>
+      <div class="fg"><label>Tipo *</label>
+        <select id="txnManualDir">
+          <option value="entrada">⬆ Entrada</option>
+          <option value="saida">⬇ Saída</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label>Descrição *</label><input type="text" id="txnManualDesc" placeholder="Nome / descrição"></div>
+    <div class="fg"><label>Observação</label><input type="text" id="txnManualObs" placeholder="Complemento opcional"></div>
+    <div class="fgrow">
+      <div class="fg"><label>Valor (R$) *</label><input type="number" id="txnManualValor" min="0" step="0.01" placeholder="0,00"></div>
+      <div class="fg"><label>Categoria</label><select id="txnManualCat"></select></div>
+    </div>
+    <div class="mactions">
+      <button class="btn btn-ghost" onclick="fecharModal('mTxnManual')">Cancelar</button>
+      <button class="btn btn-success" onclick="salvarTxnManual()">💾 Salvar</button>
     </div>
   </div>
 </div>
@@ -1617,15 +1647,85 @@ function renderContaBar(){
   ].map(c=>`<div class="card"><div class="cl">${c.l}</div><div class="cv ${c.c}">${c.v}</div>${c.s?'<div class="cs">'+c.s+'</div>':''}</div>`).join('');
   const catsBar=Object.keys(CATS_BAR);
   const tbody=document.querySelector('#barTable tbody');
-  tbody.innerHTML=txns.length?txns.map(t=>`<tr>
+  if(!txns.length){tbody.innerHTML='<tr><td colspan="7" class="empty">Nenhuma transação neste mês. Importe um XLSX do InfinitePay.</td></tr>';return;}
+  // Agrupa por dia e calcula saldo acumulado dia a dia (ASC) depois exibe DESC
+  const txnsAsc=[...txns].sort((a,b)=>a.data.localeCompare(b.data)||(a.hora||'').localeCompare(b.hora||''));
+  const saldoDia={};let bal=saldoAnteriorBar;
+  txnsAsc.forEach(t=>{bal+=t.dir==='entrada'?t.valor:-t.valor;saldoDia[t.data]=bal;});
+  // Agrupa dias em DESC
+  const diasDesc=[...new Set(txns.map(t=>t.data))].sort().reverse();
+  let rows='';
+  diasDesc.forEach(dia=>{
+    const dayTxns=txns.filter(t=>t.data===dia).sort((a,b)=>(b.hora||'').localeCompare(a.hora||''));
+    rows+=dayTxns.map(t=>`<tr>
     <td>${fmtD(t.data)}</td>
     <td style="max-width:260px;word-break:break-word">${t.nome}</td>
     <td><span class="chip">${t.tipo||'Pix'}</span></td>
     <td><select class="cat-sel" onchange="editarCatBar('${t.id}',this.value)">${catsBar.map(k=>`<option value="${k}"${t.cat===k?' selected':''}>${CATS_BAR[k]}</option>`).join('')}</select></td>
     <td class="tr bold green">${t.dir==='entrada'?brl(t.valor):''}</td>
     <td class="tr bold red">${t.dir==='saida'?brl(t.valor):''}</td>
-    <td class="admin-only"><button class="btn btn-danger btn-sm" onclick="deletarBarTxn('${t.id}')">🗑️</button></td>
-  </tr>`).join(''):'<tr><td colspan="7" class="empty">Nenhuma transação neste mês. Importe um XLSX do InfinitePay.</td></tr>';
+    <td class="admin-only" style="white-space:nowrap"><button class="btn btn-ghost btn-xs admin-only" onclick="abrirModalTxnManual('bar','${t.id}')" title="Editar">✏️</button> <button class="btn btn-danger btn-xs" onclick="deletarBarTxn('${t.id}')">🗑️</button></td>
+  </tr>`).join('');
+    const sd=saldoDia[dia];
+    const cor=sd>=0?'var(--grn)':'var(--red)';
+    rows+=`<tr style="background:var(--card2)"><td colspan="4" style="font-size:.7rem;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.4px;padding:4px 12px">Saldo em ${fmtD(dia)}</td><td colspan="3" style="text-align:right;font-weight:700;color:${cor};padding:4px 12px;font-size:.82rem">${brl(sd)}</td></tr>`;
+  });
+  tbody.innerHTML=rows;
+}
+
+// ─── LANÇAMENTO MANUAL ───
+function abrirModalTxnManual(conta, id) {
+  if(!IS_ADMIN)return;
+  document.getElementById('txnManualConta').value = conta;
+  document.getElementById('txnManualId').value = id||'';
+  document.getElementById('mTxnManualTit').textContent = id ? '✏️ Editar Lançamento' : '+ Lançamento Manual';
+  // Preenche categorias conforme a conta
+  const cats = conta==='bar' ? CATS_BAR : CATS_HOLDING;
+  document.getElementById('txnManualCat').innerHTML = Object.entries(cats).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+  if(id){
+    const txns = conta==='bar' ? DB.extratoBar : DB.extratoHolding;
+    const t = txns.find(x=>x.id===id);
+    if(!t)return;
+    document.getElementById('txnManualData').value = t.data||'';
+    document.getElementById('txnManualDir').value = t.dir||'entrada';
+    document.getElementById('txnManualDesc').value = conta==='bar' ? (t.nome||'') : (t.desc||'');
+    document.getElementById('txnManualObs').value = conta==='bar' ? (t.detalhe||'') : (t.obs||'');
+    document.getElementById('txnManualValor').value = t.valor||'';
+    document.getElementById('txnManualCat').value = t.cat||'';
+  } else {
+    document.getElementById('txnManualData').value = new Date().toISOString().slice(0,10);
+    document.getElementById('txnManualDir').value = 'entrada';
+    document.getElementById('txnManualDesc').value = '';
+    document.getElementById('txnManualObs').value = '';
+    document.getElementById('txnManualValor').value = '';
+    document.getElementById('txnManualCat').value = Object.keys(cats)[0]||'';
+  }
+  abrirModal('mTxnManual');
+}
+
+function salvarTxnManual(){
+  if(!IS_ADMIN)return;
+  const conta = document.getElementById('txnManualConta').value;
+  const id    = document.getElementById('txnManualId').value;
+  const data  = document.getElementById('txnManualData').value;
+  const dir   = document.getElementById('txnManualDir').value;
+  const desc  = document.getElementById('txnManualDesc').value.trim();
+  const obs   = document.getElementById('txnManualObs').value.trim();
+  const valor = parseFloat(document.getElementById('txnManualValor').value)||0;
+  const cat   = document.getElementById('txnManualCat').value;
+  if(!data||!desc||!valor){alert('Preencha data, descrição e valor.');return;}
+  if(conta==='bar'){
+    const obj={id:id||uid(),data,dir,nome:desc,detalhe:obs,tipo:'Manual',valor,cat};
+    if(id){const i=DB.extratoBar.findIndex(x=>x.id===id);if(i>=0)DB.extratoBar[i]=obj;}
+    else DB.extratoBar.push(obj);
+  } else {
+    const obj={id:id||uid(),data,dir,desc,obs,mov:'Manual',tipo:'Manual',valor,cat,membroId:null};
+    if(id){const i=DB.extratoHolding.findIndex(x=>x.id===id);if(i>=0)DB.extratoHolding[i]=obj;}
+    else DB.extratoHolding.push(obj);
+  }
+  salvarDB();fecharModal('mTxnManual');
+  if(conta==='bar')renderContaBar();else renderContaHolding();
+  atualizarHeader();
 }
 
 function editarCatBar(id,cat){
@@ -1691,13 +1791,22 @@ function renderContaHolding(){
   const catsHolding=Object.keys(CATS_HOLDING);
   const tbody=document.querySelector('#holdingTable tbody');
   const membrosAtivos=DB.membros.filter(m=>m.status==='ativo'||m.status==='isento_fixo');
-  tbody.innerHTML=txns.length?txns.map(t=>{
-    let cellMens='<td style="text-align:center;color:var(--border)">—</td>';
-    if(t.cat==='mensalidade'){
-      const membrosSort=[...membrosAtivos].sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
-      cellMens=`<td>${_buildMensCellHTML(t,membrosSort)}</td>`;
-    }
-    return`<tr>
+  if(!txns.length){tbody.innerHTML='<tr><td colspan="8" class="empty">Nenhuma transação. Importe um XLSX do PicPay Empresas.</td></tr>';return;}
+  // Saldo acumulado dia a dia (ASC) depois exibe DESC
+  const txnsAscH=[...txns].sort((a,b)=>a.data.localeCompare(b.data));
+  const saldoDiaH={};let balH=saldoAnterior;
+  txnsAscH.forEach(t=>{balH+=t.dir==='entrada'?t.valor:-t.valor;saldoDiaH[t.data]=balH;});
+  const diasDescH=[...new Set(txns.map(t=>t.data))].sort().reverse();
+  let rowsH='';
+  diasDescH.forEach(dia=>{
+    const dayTxns=txns.filter(t=>t.data===dia).sort((a,b)=>a.desc.localeCompare(b.desc));
+    rowsH+=dayTxns.map(t=>{
+      let cellMens='<td style="text-align:center;color:var(--border)">—</td>';
+      if(t.cat==='mensalidade'){
+        const membrosSort=[...membrosAtivos].sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+        cellMens=`<td>${_buildMensCellHTML(t,membrosSort)}</td>`;
+      }
+      return`<tr>
     <td>${fmtD(t.data)}</td>
     <td style="max-width:260px;word-break:break-word">${t.desc}</td>
     <td><span class="chip" style="font-size:.65rem">${t.obs||'—'}</span></td>
@@ -1705,8 +1814,13 @@ function renderContaHolding(){
     ${cellMens}
     <td class="tr bold green">${t.dir==='entrada'?brl(t.valor):''}</td>
     <td class="tr bold red">${t.dir==='saida'?brl(t.valor):''}</td>
-    <td class="admin-only"><button class="btn btn-danger btn-sm" onclick="deletarHoldingTxn('${t.id}')">🗑️</button></td>
-  </tr>`;}).join(''):'<tr><td colspan="8" class="empty">Nenhuma transação. Importe um XLSX do PicPay Empresas.</td></tr>';
+    <td class="admin-only" style="white-space:nowrap"><button class="btn btn-ghost btn-xs" onclick="abrirModalTxnManual('holding','${t.id}')" title="Editar">✏️</button> <button class="btn btn-danger btn-xs" onclick="deletarHoldingTxn('${t.id}')">🗑️</button></td>
+  </tr>`;}).join('');
+    const sdH=saldoDiaH[dia];
+    const corH=sdH>=0?'var(--grn)':'var(--red)';
+    rowsH+=`<tr style="background:var(--card2)"><td colspan="5" style="font-size:.7rem;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.4px;padding:4px 12px">Saldo em ${fmtD(dia)}</td><td colspan="3" style="text-align:right;font-weight:700;color:${corH};padding:4px 12px;font-size:.82rem">${brl(sdH)}</td></tr>`;
+  });
+  tbody.innerHTML=rowsH;
 }
 // filtrarMesAgora e aplicarFiltroMesesHolding removidos — lógica centralizada em _buildMensCellHTML/_computeMesOpts
 
