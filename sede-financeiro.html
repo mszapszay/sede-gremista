@@ -1648,15 +1648,18 @@ function renderContaBar(){
   const catsBar=Object.keys(CATS_BAR);
   const tbody=document.querySelector('#barTable tbody');
   if(!txns.length){tbody.innerHTML='<tr><td colspan="7" class="empty">Nenhuma transação neste mês. Importe um XLSX do InfinitePay.</td></tr>';return;}
-  // Agrupa por dia e calcula saldo acumulado dia a dia (ASC) depois exibe DESC
-  const txnsAsc=[...txns].sort((a,b)=>a.data.localeCompare(b.data)||(a.hora||'').localeCompare(b.hora||''));
+  // Ordena ASC (mais antigo em cima) — saldo diário aparece após as txns do dia
+  const diasAsc=[...new Set(txns.map(t=>t.data))].sort();
   const saldoDia={};let bal=saldoAnteriorBar;
-  txnsAsc.forEach(t=>{bal+=t.dir==='entrada'?t.valor:-t.valor;saldoDia[t.data]=bal;});
-  // Agrupa dias em DESC
-  const diasDesc=[...new Set(txns.map(t=>t.data))].sort().reverse();
+  diasAsc.forEach(dia=>{
+    txns.filter(t=>t.data===dia).sort((a,b)=>(a.hora||'').localeCompare(b.hora||'')).forEach(t=>{
+      bal+=t.dir==='entrada'?t.valor:-t.valor;
+    });
+    saldoDia[dia]=bal;
+  });
   let rows='';
-  diasDesc.forEach(dia=>{
-    const dayTxns=txns.filter(t=>t.data===dia).sort((a,b)=>(b.hora||'').localeCompare(a.hora||''));
+  diasAsc.forEach(dia=>{
+    const dayTxns=txns.filter(t=>t.data===dia).sort((a,b)=>(a.hora||'').localeCompare(b.hora||''));
     rows+=dayTxns.map(t=>`<tr>
     <td>${fmtD(t.data)}</td>
     <td style="max-width:260px;word-break:break-word">${t.nome}</td>
@@ -1668,7 +1671,7 @@ function renderContaBar(){
   </tr>`).join('');
     const sd=saldoDia[dia];
     const cor=sd>=0?'var(--grn)':'var(--red)';
-    rows+=`<tr style="background:var(--card2)"><td colspan="4" style="font-size:.7rem;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.4px;padding:4px 12px">Saldo em ${fmtD(dia)}</td><td colspan="3" style="text-align:right;font-weight:700;color:${cor};padding:4px 12px;font-size:.82rem">${brl(sd)}</td></tr>`;
+    rows+=`<tr style="background:var(--card2)"><td colspan="4" style="font-size:.7rem;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.4px;padding:4px 12px">🏁 Saldo final — ${fmtD(dia)}</td><td colspan="3" style="text-align:right;font-weight:700;color:${cor};padding:4px 12px;font-size:.82rem">${brl(sd)}</td></tr>`;
   });
   tbody.innerHTML=rows;
 }
@@ -1792,13 +1795,15 @@ function renderContaHolding(){
   const tbody=document.querySelector('#holdingTable tbody');
   const membrosAtivos=DB.membros.filter(m=>m.status==='ativo'||m.status==='isento_fixo');
   if(!txns.length){tbody.innerHTML='<tr><td colspan="8" class="empty">Nenhuma transação. Importe um XLSX do PicPay Empresas.</td></tr>';return;}
-  // Saldo acumulado dia a dia (ASC) depois exibe DESC
-  const txnsAscH=[...txns].sort((a,b)=>a.data.localeCompare(b.data));
+  // Ordena ASC (mais antigo em cima) — saldo diário aparece após as txns do dia
+  const diasAscH=[...new Set(txns.map(t=>t.data))].sort();
   const saldoDiaH={};let balH=saldoAnterior;
-  txnsAscH.forEach(t=>{balH+=t.dir==='entrada'?t.valor:-t.valor;saldoDiaH[t.data]=balH;});
-  const diasDescH=[...new Set(txns.map(t=>t.data))].sort().reverse();
+  diasAscH.forEach(dia=>{
+    txns.filter(t=>t.data===dia).forEach(t=>{balH+=t.dir==='entrada'?t.valor:-t.valor;});
+    saldoDiaH[dia]=balH;
+  });
   let rowsH='';
-  diasDescH.forEach(dia=>{
+  diasAscH.forEach(dia=>{
     const dayTxns=txns.filter(t=>t.data===dia).sort((a,b)=>a.desc.localeCompare(b.desc));
     rowsH+=dayTxns.map(t=>{
       let cellMens='<td style="text-align:center;color:var(--border)">—</td>';
@@ -1818,7 +1823,7 @@ function renderContaHolding(){
   </tr>`;}).join('');
     const sdH=saldoDiaH[dia];
     const corH=sdH>=0?'var(--grn)':'var(--red)';
-    rowsH+=`<tr style="background:var(--card2)"><td colspan="5" style="font-size:.7rem;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.4px;padding:4px 12px">Saldo em ${fmtD(dia)}</td><td colspan="3" style="text-align:right;font-weight:700;color:${corH};padding:4px 12px;font-size:.82rem">${brl(sdH)}</td></tr>`;
+    rowsH+=`<tr style="background:var(--card2)"><td colspan="5" style="font-size:.7rem;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.4px;padding:4px 12px">🏁 Saldo final — ${fmtD(dia)}</td><td colspan="3" style="text-align:right;font-weight:700;color:${corH};padding:4px 12px;font-size:.82rem">${brl(sdH)}</td></tr>`;
   });
   tbody.innerHTML=rowsH;
 }
