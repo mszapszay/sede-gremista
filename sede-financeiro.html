@@ -166,6 +166,11 @@ select option{background:#fff}
 .prev-table th,.prev-table td{padding:5px 8px;border:1px solid var(--border);white-space:nowrap}
 .prev-table th{background:var(--card2);font-weight:600;color:var(--txt2);position:sticky;top:0}
 .prev-select{border:1px solid var(--border);border-radius:4px;padding:2px 4px;font-size:.72rem;background:var(--card);color:var(--txt)}
+.vc-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;cursor:pointer;border:1.5px solid var(--border);margin-bottom:6px;transition:border-color .15s,background .15s}
+.vc-row:hover{background:var(--card2);border-color:var(--grn)}
+.vc-row input[type=radio]{accent-color:var(--grn);width:16px;height:16px;flex-shrink:0}
+.vc-row .vc-nome{flex:1;font-weight:600;font-size:.9rem}
+.vc-row .vc-det{font-size:.75rem;color:var(--txt2)}
 .search-bar{display:flex;gap:10px;margin-bottom:18px}.search-bar input{max-width:320px}
 .mb16{margin-bottom:16px}.mt8{margin-top:8px}
 
@@ -876,6 +881,21 @@ body.viewer .admin-only{display:none!important}
 
 <!-- MENU MENSALIDADES -->
 <div id="mensMenu"></div>
+
+<!-- MODAL VINCULO COMANDA HOLDING -->
+<div class="mover" id="mVinculoComanda">
+  <div class="modal" style="max-width:480px">
+    <h3>🔗 Vincular Pagamento de Comanda</h3>
+    <input type="hidden" id="vcTxnId">
+    <p id="vcTxnInfo" style="font-size:.85rem;color:var(--txt2);margin:0 0 14px"></p>
+    <p style="font-size:.8rem;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;margin:0 0 8px">Sócios com comanda em aberto</p>
+    <div id="vcMembros"></div>
+    <div class="mactions" style="margin-top:18px">
+      <button class="btn btn-ghost" onclick="fecharModal('mVinculoComanda')">Cancelar</button>
+      <button class="btn btn-success" onclick="confirmarVinculoComanda()">✓ Confirmar e quitar</button>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL MEMBRO -->
 <div class="mover" id="mMembro">
@@ -1827,6 +1847,13 @@ function renderContaHolding(){
       if(t.cat==='mensalidade'){
         const membrosSort=[...membrosAtivos].sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
         cellMens=`<td>${_buildMensCellHTML(t,membrosSort)}</td>`;
+      }else if(t.cat==='comanda'){
+        if(t.cmdMembroId){
+          const mb=DB.membros.find(m=>m.id===t.cmdMembroId);
+          cellMens=`<td><span class="badge bg-green" style="font-size:.65rem;cursor:pointer" onclick="abrirVinculoComanda('${t.id}')" title="Clique para reclassificar">✓ ${mb?mb.nome:'Sócio'}</span></td>`;
+        }else{
+          cellMens=`<td style="text-align:center"><button class="btn btn-ghost btn-xs" onclick="abrirVinculoComanda('${t.id}')">🔗 Vincular</button></td>`;
+        }
       }
       return`<tr>
     <td>${fmtD(t.data)}</td>
@@ -1865,6 +1892,9 @@ function editarCatHolding(id,cat){
     t.membroId=null;t.mesMensArr=null;t.mesMens=null;
     delete _membroOverride[id]; // limpa cache ao desassociar mensalidade
   }
+  if(t.cat==='comanda'&&cat!=='comanda'){
+    t.cmdMembroId=null; // limpa vínculo ao sair de comanda
+  }
   t.cat=cat;
   if(cat==='mensalidade'){
     const nMeses=Math.max(1,Math.round((t.valor||0)/30));
@@ -1892,6 +1922,8 @@ function editarCatHolding(id,cat){
   }
   salvarDB();
   atualizarLinhaHolding(id);
+  // Quando categoria muda para comanda → abre modal de vínculo automaticamente
+  if(cat==='comanda')abrirVinculoComanda(id);
 }
 // Reconstrói a célula de mensalidade de uma linha (sem re-render da tabela inteira)
 function atualizarLinhaHolding(txnId){
@@ -1905,6 +1937,16 @@ function atualizarLinhaHolding(txnId){
   const tds=row.querySelectorAll('td');
   if(tds.length<5)return;
   const mensCell=tds[4];
+  if(t.cat==='comanda'){
+    mensCell.removeAttribute('style');
+    if(t.cmdMembroId){
+      const mb=DB.membros.find(m=>m.id===t.cmdMembroId);
+      mensCell.innerHTML=`<span class="badge bg-green" style="font-size:.65rem;cursor:pointer" onclick="abrirVinculoComanda('${t.id}')" title="Clique para reclassificar">✓ ${mb?mb.nome:'Sócio'}</span>`;
+    }else{
+      mensCell.innerHTML=`<button class="btn btn-ghost btn-xs" onclick="abrirVinculoComanda('${t.id}')">🔗 Vincular</button>`;
+    }
+    return;
+  }
   if(t.cat!=='mensalidade'){
     mensCell.setAttribute('style','text-align:center;color:var(--border)');
     mensCell.innerHTML='—';
@@ -2550,6 +2592,79 @@ function marcarTudoPagoMembro(mbId){
     });
   });
   salvarDB();renderComandas();
+}
+
+// ─── VÍNCULO COMANDA → HOLDING ───
+function abrirVinculoComanda(txnId){
+  if(!IS_ADMIN)return;
+  const t=DB.extratoHolding.find(x=>x.id===txnId);
+  if(!t)return;
+  // Monta mapa: membroId → total pendente
+  const pendPorMembro={};
+  Object.entries(DB.comandas||{}).forEach(([,items])=>{
+    (items||[]).forEach(item=>{
+      if(item.status==='pendente'){
+        pendPorMembro[item.membroId]=(pendPorMembro[item.membroId]||0)+calcCmd(item);
+      }
+    });
+  });
+  const entries=Object.entries(pendPorMembro).filter(([,v])=>v>0)
+    .sort((a,b)=>{
+      const ma=DB.membros.find(m=>m.id===a[0]);
+      const mb=DB.membros.find(m=>m.id===b[0]);
+      return(ma?ma.nome:'').localeCompare(mb?mb.nome:'','pt-BR');
+    });
+  if(!entries.length){alert('Nenhum sócio com comanda em aberto.');fecharModal('mVinculoComanda');return;}
+  document.getElementById('vcTxnId').value=txnId;
+  document.getElementById('vcTxnInfo').textContent=`Pagamento recebido: ${t.desc} — ${brl(t.valor)} em ${fmtD(t.data)}`;
+  // Monta detalhes por jogo para exibição
+  const itemsPorMembro={};
+  Object.entries(DB.comandas||{}).forEach(([jogoId,items])=>{
+    const j=DB.jogos.find(x=>x.id===jogoId);
+    (items||[]).forEach(item=>{
+      if(item.status==='pendente'){
+        if(!itemsPorMembro[item.membroId])itemsPorMembro[item.membroId]=[];
+        itemsPorMembro[item.membroId].push({jogo:j?fmtD(j.data):'?',val:calcCmd(item)});
+      }
+    });
+  });
+  document.getElementById('vcMembros').innerHTML=entries.map(([mbId,total])=>{
+    const mb=DB.membros.find(m=>m.id===mbId);
+    const det=(itemsPorMembro[mbId]||[]).map(x=>`${x.jogo}: ${brl(x.val)}`).join(' · ');
+    const selecionado=t.cmdMembroId===mbId;
+    return`<label class="vc-row">
+      <input type="radio" name="vcMembro" value="${mbId}"${selecionado?' checked':''}>
+      <span class="vc-nome">${mb?mb.nome:'Sócio desconhecido'}</span>
+      <span class="vc-det">${det}</span>
+      <span class="badge bg-red">${brl(total)}</span>
+    </label>`;
+  }).join('');
+  abrirModal('mVinculoComanda');
+}
+
+function confirmarVinculoComanda(){
+  if(!IS_ADMIN)return;
+  const txnId=document.getElementById('vcTxnId').value;
+  const radio=document.querySelector('#vcMembros input[name="vcMembro"]:checked');
+  if(!radio){alert('Selecione um sócio.');return;}
+  const mbId=radio.value;
+  const mb=DB.membros.find(m=>m.id===mbId);
+  const t=DB.extratoHolding.find(x=>x.id===txnId);
+  if(!t)return;
+  // Vincula transação ao sócio
+  t.cmdMembroId=mbId;
+  // Marca todas as comandas pendentes do sócio como pagas
+  let marcados=0;
+  Object.keys(DB.comandas||{}).forEach(jogoId=>{
+    (DB.comandas[jogoId]||[]).forEach(item=>{
+      if(item.membroId===mbId&&item.status==='pendente'){item.status='pago';marcados++;}
+    });
+  });
+  salvarDB();
+  fecharModal('mVinculoComanda');
+  atualizarLinhaHolding(txnId);
+  renderComandas();
+  alert(`✓ ${marcados} comanda(s) de ${mb?mb.nome:'sócio'} marcada(s) como paga(s).`);
 }
 
 function abrirComanda(jogoId){
