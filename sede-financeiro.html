@@ -575,11 +575,6 @@ body.viewer .admin-only{display:none!important}
     <h2>Mensalidades</h2>
     <div style="display:flex;gap:6px;align-items:center">
       <button class="btn btn-ghost" onclick="exportarMensalidades()">⬇ Excel</button>
-<button class="btn btn-primary btn-sm admin-only" onclick="reconciliarMensalidades()" style="background:#7c3aed">⚡ Reconciliar Holding</button>
-<button id="btnImportBatuta" class="btn btn-primary btn-sm admin-only" onclick="importarDadosBatuta()" style="background:#059669">📋 Importar Batuta</button>
-<button class="btn btn-primary btn-sm admin-only" onclick="quitarJanFev()" style="background:#0891b2">✓ Quitar Jan→Mar</button>
-<button class="btn btn-primary btn-sm admin-only" onclick="zerarApartirMarco()" style="background:#dc2626">🗑 Zerar Abr→Dez</button>
-<button class="btn btn-primary btn-sm admin-only" onclick="zerarTodasMensalidades()" style="background:#7f1d1d">⚠️ Zerar Tudo + Holding</button>
       <select id="mensAno" onchange="renderMensalidades()" style="border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.8rem">
         <option value="2026">2026</option><option value="2027">2027</option>
       </select>
@@ -643,8 +638,6 @@ body.viewer .admin-only{display:none!important}
 <!-- barFiltroMes removido — substituído por abas abaixo -->
       <button class="btn btn-ghost btn-sm admin-only" onclick="abrirAberturaBar()">⚙️ Saldo abertura</button>
       <button class="btn btn-primary btn-sm admin-only" onclick="document.getElementById('fileBarXlsx').click()">📥 Importar XLSX</button>
-      <button id="btnImportPDF_bar" class="btn btn-sm admin-only" style="background:#7c3aed;color:#fff" onclick="importarExtratosPDF('bar')">📄 PDF 25/03–25/05</button>
-      
       <input type="file" id="fileBarXlsx" accept=".xlsx,.xls" style="display:none" onchange="importarArquivoBar(this)">
     </div>
   </div>
@@ -676,8 +669,6 @@ body.viewer .admin-only{display:none!important}
 <!-- holdingFiltroMes removido — substituído por abas abaixo -->
       <button class="btn btn-ghost btn-sm admin-only" onclick="abrirAberturaHolding()">⚙️ Saldo abertura</button>
       <button class="btn btn-primary btn-sm admin-only" onclick="document.getElementById('fileHoldingXlsx').click()">📥 Importar XLSX</button>
-      <button id="btnImportPDF_holding" class="btn btn-sm admin-only" style="background:#7c3aed;color:#fff" onclick="importarExtratosPDF('holding')">📄 PDF 25/03–25/05</button>
-      
       <input type="file" id="fileHoldingXlsx" accept=".xlsx,.xls" style="display:none" onchange="importarArquivoHolding(this)">
     </div>
   </div>
