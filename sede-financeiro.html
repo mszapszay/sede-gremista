@@ -1880,7 +1880,10 @@ function processarXLSXBar(wb){
     if(!data||data.length<10)continue;
     let valor;
     if(typeof valorRaw==='number'){valor=valorRaw;}
-    else{const s=String(valorRaw).replace(/[R$\s.]/g,'').replace(',','.');valor=parseFloat(s)||0;}
+    else{const s=String(valorRaw).trim().replace(/R\$\s*/,'');
+      // Brasileiro "1.800,00": remove pontos (milhar) e troca vírgula → ponto
+      // Internacional "180.00": mantém ponto decimal, só remove não-numéricos
+      valor=parseFloat(s.includes(',')?s.replace(/\./g,'').replace(',','.'):s.replace(/[^\d.]/g,''))||0;}
     if(valor===0)continue;
     const dir=valor<0?'saida':'entrada';
     const nome=nomeRaw.replace(/^Pix\s+/i,'').trim();
@@ -1959,7 +1962,10 @@ function processarXLSXHolding(wb){
     if(!data||data.length<10||!desc)continue;
     let valor;
     if(typeof valorRaw==='number'){valor=Math.abs(valorRaw);}
-    else{const s=String(valorRaw).replace(/[R$\s.]/g,'').replace(',','.');valor=Math.abs(parseFloat(s)||0);}
+    else{const s=String(valorRaw).trim().replace(/R\$\s*/,'');
+      // Brasileiro "1.800,00": remove pontos (milhar) e troca vírgula → ponto
+      // Internacional "180.00": mantém ponto decimal, só remove não-numéricos
+      valor=Math.abs(parseFloat(s.includes(',')?s.replace(/\./g,'').replace(',','.'):s.replace(/[^\d.]/g,''))||0);}
     if(!valor)continue;
     const dir=/entrada|recebido|créd/i.test(tipoStr)?'entrada':'saida';
     const key=`holding|${data}|${valor.toFixed(2)}|${desc}`;
