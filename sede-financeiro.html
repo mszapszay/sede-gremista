@@ -1139,11 +1139,9 @@ function getMensalidadesFiltro(membroId, txnId){
   const fromDB=(DB&&DB.mensalidades&&DB.mensalidades[membroId])||{};
   const fromCache=ov.mens||{};
   const m={...fromCache,...fromDB};
-  // Fallback in-memory: só preenche Jan/Fev/Mar se realmente vazios
-  // (não sobrescreve 'pendente' explicitamente gravado pelo admin)
-  if(!m['2026-01'])m['2026-01']='pago';
-  if(!m['2026-02'])m['2026-02']='pago';
-  if(!m['2026-03'])m['2026-03']='pago';
+  // Sem fallback: célula vazia = pendente (em aberto).
+  // A migração one-time (migJanFevMar2026) garante que membros existentes
+  // tenham Jan/Fev/Mar preenchidos no Firebase.
   return m;
 }
 
@@ -1211,19 +1209,22 @@ function runMigrations(){
 
   let changed=false;
 
-  // Jan/Fev/Mar: preenche slots VAZIOS de todos os membros.
-  // Roda em toda carga — garante que o filtro do dropdown de meses sempre
-  // tenha dados. Não sobrescreve 'pago'/'isento'/'fora' já gravados pelo usuário.
-  const meses=['2026-01','2026-02','2026-03'];
-  DB.membros.forEach(mb=>{
-    if(!DB.mensalidades[mb.id])DB.mensalidades[mb.id]={};
-    meses.forEach(ym=>{
-      if(!DB.mensalidades[mb.id][ym]){
-        DB.mensalidades[mb.id][ym]=mb.status==='isento_fixo'?'isento':'pago';
-        changed=true;
-      }
+  // Jan/Fev/Mar: inicializa membros existentes UMA ÚNICA VEZ.
+  // Depois da migração, células vazias = pendente (comportamento desejado).
+  if(!DB.migJanFevMar2026){
+    const meses=['2026-01','2026-02','2026-03'];
+    DB.membros.forEach(mb=>{
+      if(!DB.mensalidades[mb.id])DB.mensalidades[mb.id]={};
+      meses.forEach(ym=>{
+        if(!DB.mensalidades[mb.id][ym]){
+          DB.mensalidades[mb.id][ym]=mb.status==='isento_fixo'?'isento':'pago';
+          changed=true;
+        }
+      });
     });
-  });
+    DB.migJanFevMar2026=true;
+    changed=true;
+  }
 
   // Limpeza de membros v2 — regex corrigido + deduplicação geral por nome normalizado
   if(!DB.migLimpezaMembros2){
@@ -2132,14 +2133,12 @@ function renderMensalidades(){
       let cell='<span style="color:var(--border)">–</span>';
       if(isJanFevMar){
         if(st==='pago')cell=`<span class="badge bg-green">Quitado</span>`;
-        else if(st==='pendente')cell=`<span class="badge bg-red">Pendente</span>`;
         else if(st==='isento')cell=`<span class="badge bg-yellow">Isento</span>`;
         else if(st==='fora')cell=`<span class="badge bg-gray">Fora</span>`;
         html+=`<td class="mc" onclick="abrirMenuMens(event,'${mb.id}','${ym}',true)">${cell}</td>`;
       } else {
         if(mb.status==='isento_fixo'){html+=`<td style="background:#fef9e7"><span class="badge bg-yellow">Isento</span></td>`;return;}
         if(st==='pago')cell=`<span class="badge bg-green">R$ 30,00</span>`;
-        else if(st==='pendente')cell=`<span class="badge bg-red">Pendente</span>`;
         else if(st==='isento')cell=`<span class="badge bg-yellow">Isento</span>`;
         else if(st==='fora')cell=`<span class="badge bg-gray">Fora</span>`;
         html+=`<td class="mc" onclick="abrirMenuMens(event,'${mb.id}','${ym}',false)">${cell}</td>`;
@@ -2218,8 +2217,8 @@ function abrirMenuMens(e,mbId,ym,isJanFev){
   e.stopPropagation();
   const menu=document.getElementById('mensMenu');
   const opcoes=isJanFev
-    ?[{v:'pago',l:'✅ Quitado'},{v:'pendente',l:'🔴 Pendente'},{v:'isento',l:'🟡 Isento'},{v:'fora',l:'⬜ Fora'},{v:null,l:'✖ Limpar'}]
-    :[{v:'pago',l:'✅ R$ 30,00'},{v:'pendente',l:'🔴 Pendente'},{v:'isento',l:'🟡 Isento'},{v:'fora',l:'⬜ Fora'},{v:null,l:'✖ Limpar'}];
+    ?[{v:'pago',l:'✅ Quitado'},{v:'isento',l:'🟡 Isento'},{v:'fora',l:'⬜ Fora'},{v:null,l:'✖ Limpar'}]
+    :[{v:'pago',l:'✅ R$ 30,00'},{v:'isento',l:'🟡 Isento'},{v:'fora',l:'⬜ Fora'},{v:null,l:'✖ Limpar'}];
   menu.innerHTML=opcoes.map(o=>`<button onclick="salvarMens('${mbId}','${ym}',${o.v===null?'null':`'${o.v}'`})">${o.l}</button>`).join('');
   const r=e.target.getBoundingClientRect();
   menu.style.top=(r.bottom+4)+'px';
