@@ -617,9 +617,8 @@ body.viewer .admin-only{display:none!important}
 
 <!-- COMANDAS -->
 <div id="tab-comandas" class="page">
-  <div class="sh"><h2>Comandas</h2></div>
+  <div class="sh"><h2>Comandas</h2><button class="btn btn-primary admin-only" onclick="abrirModalJogo()">+ Novo jogo</button></div>
   <div id="receberSection"></div>
-  <div class="alert admin-only">Registre consumo no crédito por jogo. Marque como Pago quando receber.</div>
   <div id="comandasList"></div>
 </div>
 
@@ -2342,7 +2341,7 @@ function salvarJogo(){
   const j={id:id||uid(),data:document.getElementById('jData').value,adv:document.getElementById('jAdv').value,comp:document.getElementById('jComp').value,local:document.getElementById('jLocal').value,rec:parseFloat(document.getElementById('jRec').value)||0,obs:document.getElementById('jObs').value};
   if(!j.data){alert('Informe a data.');return;}
   if(id){const i=DB.jogos.findIndex(x=>x.id===id);if(i>=0)DB.jogos[i]=j;}else DB.jogos.push(j);
-  salvarDB();fecharModal('mJogo');
+  salvarDB();fecharModal('mJogo');renderJogos();renderComandas();
 }
 function excluirJogo(id){
   if(!IS_ADMIN)return;
@@ -2564,7 +2563,11 @@ function renderComandas(){
         <div>${totPend>0?`<span class="badge bg-red">${brl(totPend)} pendente</span>`:'<span class="badge bg-green">OK</span>'}</div>
       </div>
       <div class="jcb" id="cb${j.id}">
-        <button class="btn btn-primary btn-sm mb admin-only" onclick="abrirComanda('${j.id}')">+ Adicionar consumo</button>
+        <div style="display:flex;gap:6px;margin-bottom:10px" class="admin-only">
+          <button class="btn btn-primary btn-sm" onclick="abrirComanda('${j.id}')">+ Consumo</button>
+          <button class="btn btn-ghost btn-sm" onclick="editarJogo('${j.id}')">✏️ Editar jogo</button>
+          <button class="btn btn-danger btn-sm" onclick="excluirJogo('${j.id}')">🗑️ Excluir jogo</button>
+        </div>
         ${tbl||'<div class="empty" style="padding:14px">Nenhum consumo no crédito.</div>'}
       </div>
     </div>`;
