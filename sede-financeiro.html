@@ -149,10 +149,24 @@ select option{background:#fff}
 .mt .badge{padding:1px 4px;font-size:.63rem}
 
 /* ── JOGOS CARDS ── */
-.jcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:9px;overflow:hidden}
-.jch{background:var(--acc);color:#fff;padding:10px 13px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
-.jch .ji{font-size:.85rem;font-weight:600}
-.jcb{padding:13px;display:none}.jcb.open{display:block}
+.jcard{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.07);overflow:hidden}
+.jch{background:var(--acc);color:#fff;padding:13px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;gap:10px;user-select:none}
+.jch .ji{font-size:.9rem;font-weight:700;letter-spacing:.01em}
+.jch .ji-sub{font-size:.7rem;opacity:.82;margin-top:3px;display:flex;gap:8px;flex-wrap:wrap}
+.jch-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.jch-chev{font-size:.65rem;opacity:.75;transition:transform .2s}
+.jcb{display:none}.jcb.open{display:block}
+.jcb-toolbar{display:flex;gap:6px;padding:10px 14px;background:var(--card2);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.cmd-list{padding:0}
+.cmd-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.cmd-row:last-child{border-bottom:none}
+.cmd-nome{font-weight:600;font-size:.84rem;min-width:130px}
+.cmd-itens{flex:1;display:flex;flex-wrap:wrap;gap:3px;align-items:center}
+.cmd-chip{font-size:.64rem;padding:2px 7px;background:var(--card2);border-radius:10px;border:1px solid var(--border);white-space:nowrap}
+.cmd-val{font-weight:700;font-size:.88rem;white-space:nowrap;min-width:70px;text-align:right}
+.cmd-actions{display:flex;gap:3px;flex-shrink:0}
+.cmd-empty{padding:18px 16px;color:var(--txt2);font-size:.82rem;text-align:center;font-style:italic}
+.cmd-footer{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;background:var(--card2);border-top:1px solid var(--border);font-size:.78rem;font-weight:600;color:var(--txt2)}
 .ctable{width:100%;border-collapse:collapse;margin-top:9px;font-size:.76rem}
 .ctable th,.ctable td{padding:5px 8px;border:1px solid var(--border);text-align:center}
 .ctable th{background:var(--card2);font-weight:600;color:var(--txt2)}.ctable td:first-child{text-align:left}
@@ -2527,48 +2541,68 @@ function renderComandas(){
   el.innerHTML=sorted.map(j=>{
     const items=DB.comandas[j.id]||[];
     const totPend=items.filter(i=>i.status==='pendente').reduce((s,i)=>s+calcCmd(i),0);
-    let tbl='';
-    if(items.length)tbl=`<table class="ctable"><thead><tr><th>Sócio / Descrição</th><th>Detalhes</th><th>Total</th><th>Status</th><th class="admin-only"></th></tr></thead><tbody>
-      ${items.map((item,idx)=>{
-        const mb=DB.membros.find(m=>m.id===item.membroId);
-        const nomeCell=`${mb?mb.nome:'?'}${item.descricao?`<br><span style="font-size:.7rem;color:var(--txt2)">${item.descricao}</span>`:''}`;
-        let detalheCell='';
-        if(item.fonte==='batuta'){
-          detalheCell=`<span style="font-size:.75rem;color:var(--txt2);font-style:italic">Importado do Batuta</span>`;
-        } else {
-          const parts=[];
-          if(item.brahma)parts.push(item.brahma+'× Brahma');
-          if(item.heineken)parts.push(item.heineken+'× Heineken');
-          if(item.fernet)parts.push(item.fernet+'× Fernet');
-          if(item.refrig)parts.push(item.refrig+'× Refri');
-          if(item.agua)parts.push(item.agua+'× Água');
-          if(item.desconto)parts.push('Desc. '+item.desconto+'%');
-          detalheCell=parts.join(' · ')||'—';
-        }
-        return`<tr>
-          <td>${nomeCell}</td>
-          <td style="font-size:.8rem;color:var(--txt2)">${detalheCell}</td>
-          <td class="bold">${brl(calcCmd(item))}</td>
-          <td>${item.status==='pago'?'<span class="badge bg-green">Pago</span>':'<span class="badge bg-red">Pendente</span>'}</td>
-          <td class="admin-only" style="white-space:nowrap">
-            ${item.status==='pendente'?`<button class="btn btn-success btn-sm" onclick="marcarPago('${j.id}',${idx})">✓</button> `:''}
-            <button class="btn btn-danger btn-sm" onclick="removerComanda('${j.id}',${idx})">🗑️</button>
-          </td>
-        </tr>`;
-      }).join('')}</tbody></table>`;
+    const totPago=items.filter(i=>i.status==='pago').reduce((s,i)=>s+calcCmd(i),0);
+    const nPend=items.filter(i=>i.status==='pendente').length;
+    // Sub-título do header
+    const subParts=[];
+    if(j.local==='fora')subParts.push('✈️ Fora');else subParts.push('🏠 Porto Alegre');
+    if(j.comp)subParts.push(j.comp);
+    if(items.length)subParts.push(`${items.length} consumo${items.length>1?'s':''}`);
+    // Badge do header
+    const badge=totPend>0
+      ?`<span class="badge bg-red">${brl(totPend)} pendente</span>`
+      :(items.length?`<span class="badge bg-green">✓ Quitado</span>`:'');
+    // Linhas de consumo
+    const rows=items.map((item,idx)=>{
+      const mb=DB.membros.find(m=>m.id===item.membroId);
+      const chips=[];
+      if(item.fonte==='batuta'){
+        chips.push(`<span class="cmd-chip" style="font-style:italic">Batuta</span>`);
+      }else{
+        if(item.brahma)chips.push(`<span class="cmd-chip">${item.brahma}× Brahma</span>`);
+        if(item.heineken)chips.push(`<span class="cmd-chip">${item.heineken}× Heineken</span>`);
+        if(item.fernet)chips.push(`<span class="cmd-chip">${item.fernet}× Fernet</span>`);
+        if(item.refrig)chips.push(`<span class="cmd-chip">${item.refrig}× Refri</span>`);
+        if(item.agua)chips.push(`<span class="cmd-chip">${item.agua}× Água</span>`);
+        if(item.desconto)chips.push(`<span class="cmd-chip" style="color:var(--grn)">-${item.desconto}%</span>`);
+      }
+      if(item.descricao)chips.push(`<span class="cmd-chip" style="color:var(--txt2)">${item.descricao}</span>`);
+      const isPago=item.status==='pago';
+      return`<div class="cmd-row">
+        <div class="cmd-nome">${mb?mb.nome:'?'}</div>
+        <div class="cmd-itens">${chips.join('')||'<span style="color:var(--txt2);font-size:.75rem">—</span>'}</div>
+        <div class="cmd-val ${isPago?'green':'red'}">${brl(calcCmd(item))}</div>
+        <div>${isPago?'<span class="badge bg-green">Pago</span>':'<span class="badge bg-red">Pendente</span>'}</div>
+        <div class="cmd-actions admin-only">
+          ${!isPago?`<button class="btn btn-success btn-xs" onclick="marcarPago('${j.id}',${idx})" title="Marcar pago">✓</button>`:''}
+          <button class="btn btn-danger btn-xs" onclick="removerComanda('${j.id}',${idx})" title="Remover">🗑️</button>
+        </div>
+      </div>`;
+    }).join('');
+    const footer=items.length?`<div class="cmd-footer">
+      <span>${items.length} consumo${items.length>1?'s':''} · ${nPend} pendente${nPend!==1?'s':''}</span>
+      <span>Recebido: <strong class="green">${brl(totPago)}</strong> &nbsp;|&nbsp; Pendente: <strong class="${totPend>0?'red':'green'}">${brl(totPend)}</strong></span>
+    </div>`:'';
     return`<div class="jcard">
       <div class="jch" onclick="toggleJogo('cb${j.id}')">
-        <div><div class="ji">${fmtD(j.data)} · Grêmio${j.adv?' x '+j.adv:''}</div>
-        <div style="font-size:.7rem;opacity:.75;margin-top:2px">${items.length} na comanda</div></div>
-        <div>${totPend>0?`<span class="badge bg-red">${brl(totPend)} pendente</span>`:'<span class="badge bg-green">OK</span>'}</div>
+        <div>
+          <div class="ji">⚽ ${fmtD(j.data)}${j.adv?' · Grêmio x '+j.adv:' · Grêmio'}</div>
+          <div class="ji-sub">${subParts.map(p=>`<span>${p}</span>`).join('')}</div>
+        </div>
+        <div class="jch-right">
+          ${badge}
+          <span class="jch-chev">▼</span>
+        </div>
       </div>
       <div class="jcb" id="cb${j.id}">
-        <div style="display:flex;gap:6px;margin-bottom:10px" class="admin-only">
+        <div class="jcb-toolbar admin-only">
           <button class="btn btn-primary btn-sm" onclick="abrirComanda('${j.id}')">+ Consumo</button>
           <button class="btn btn-ghost btn-sm" onclick="editarJogo('${j.id}')">✏️ Editar jogo</button>
           <button class="btn btn-danger btn-sm" onclick="excluirJogo('${j.id}')">🗑️ Excluir jogo</button>
         </div>
-        ${tbl||'<div class="empty" style="padding:14px">Nenhum consumo no crédito.</div>'}
+        ${j.obs?`<div style="padding:8px 14px;font-size:.78rem;color:var(--txt2);border-bottom:1px solid var(--border)">📝 ${j.obs}</div>`:''}
+        <div class="cmd-list">${rows||`<div class="cmd-empty">Nenhum consumo registrado.</div>`}</div>
+        ${footer}
       </div>
     </div>`;
   }).join('');
@@ -2767,7 +2801,12 @@ function excluirMembro(id){
 // ─── MODAIS ───
 function abrirModal(id){document.getElementById(id).classList.add('open');}
 function fecharModal(id){document.getElementById(id).classList.remove('open');}
-function toggleJogo(id){document.getElementById(id).classList.toggle('open');}
+function toggleJogo(id){
+  const jcb=document.getElementById(id);
+  jcb.classList.toggle('open');
+  const chev=jcb.previousElementSibling?.querySelector('.jch-chev');
+  if(chev)chev.style.transform=jcb.classList.contains('open')?'rotate(180deg)':'';
+}
 
 // ─── EXPORTAR ───
 function exportarJogos(){
