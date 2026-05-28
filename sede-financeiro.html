@@ -1668,17 +1668,12 @@ function renderContaBar(){
   // Cards por categoria de entrada (top 3)
   const saldoAnteriorBar=(DB.saldoAberturaBar||0)+DB.extratoBar.filter(t=>getMes(t.data)<mes).reduce((s,t)=>s+(t.dir==='entrada'?t.valor:-t.valor),0);
   const saldoFinalBar=saldoAnteriorBar+res;
-  const catEnt={};
-  txns.filter(t=>t.dir==='entrada').forEach(t=>{ catEnt[t.cat]=(catEnt[t.cat]||0)+t.valor; });
-  const topCats=Object.entries(catEnt).sort((a,b)=>b[1]-a[1]).slice(0,3);
-  const extraCards=topCats.map(([k,v])=>({l:CATS_BAR[k]||k,v:brl(v),c:'green'}));
   document.getElementById('barCards').innerHTML=[
-    {l:'Saldo anterior',v:brl(saldoAnteriorBar),c:saldoAnteriorBar>=0?'green':'red',s:'acumulado até mês anterior'},
-    {l:'Entradas no mês',v:brl(entTotal),c:'green',s:txns.filter(t=>t.dir==='entrada').length+' transações'},
-    {l:'Saídas no mês',v:brl(saiTotal),c:'red',s:txns.filter(t=>t.dir==='saida').length+' transações'},
-    {l:'Saldo final do mês',v:brl(saldoFinalBar),c:saldoFinalBar>=0?'green':'red',s:'anterior + entradas − saídas'},
-    ...extraCards.map(c=>({...c,s:'entradas por categoria'}))
-  ].map(c=>`<div class="card"><div class="cl">${c.l}</div><div class="cv ${c.c}">${c.v}</div>${c.s?'<div class="cs">'+c.s+'</div>':''}</div>`).join('');
+    {l:'Saldo inicial',v:brl(saldoAnteriorBar),c:saldoAnteriorBar>=0?'green':'red'},
+    {l:'Entradas no mês',v:brl(entTotal),c:'green'},
+    {l:'Saídas no mês',v:brl(saiTotal),c:'red'},
+    {l:'Saldo final',v:brl(saldoFinalBar),c:saldoFinalBar>=0?'green':'red'},
+  ].map(c=>`<div class="card"><div class="cl">${c.l}</div><div class="cv ${c.c}">${c.v}</div></div>`).join('');
   const catsBar=Object.keys(CATS_BAR);
   const tbody=document.querySelector('#barTable tbody');
   if(!txns.length){tbody.innerHTML='<tr><td colspan="7" class="empty">Nenhuma transação neste mês. Importe um XLSX do InfinitePay.</td></tr>';return;}
@@ -1820,11 +1815,11 @@ function renderContaHolding(){
   const saldoAnterior=(DB.saldoAberturaHolding||0)+DB.extratoHolding.filter(t=>getMes(t.data)<mes).reduce((s,t)=>s+(t.dir==='entrada'?t.valor:-t.valor),0);
   const saldoFinal=saldoAnterior+res;
   document.getElementById('holdingCards').innerHTML=[
-    {l:'Saldo anterior',v:brl(saldoAnterior),c:saldoAnterior>=0?'green':'red',s:'acumulado até mês anterior'},
-    {l:'Entradas no mês',v:brl(entTotal),c:'green',s:txns.filter(t=>t.dir==='entrada').length+' transações'},
-    {l:'Saídas no mês',v:brl(saiTotal),c:'red',s:txns.filter(t=>t.dir==='saida').length+' transações'},
-    {l:'Saldo final do mês',v:brl(saldoFinal),c:saldoFinal>=0?'green':'red',s:'anterior + entradas − saídas'},
-  ].map(c=>`<div class="card"><div class="cl">${c.l}</div><div class="cv ${c.c}">${c.v}</div>${c.s?'<div class="cs">'+c.s+'</div>':''}</div>`).join('');
+    {l:'Saldo inicial',v:brl(saldoAnterior),c:saldoAnterior>=0?'green':'red'},
+    {l:'Entradas no mês',v:brl(entTotal),c:'green'},
+    {l:'Saídas no mês',v:brl(saiTotal),c:'red'},
+    {l:'Saldo final',v:brl(saldoFinal),c:saldoFinal>=0?'green':'red'},
+  ].map(c=>`<div class="card"><div class="cl">${c.l}</div><div class="cv ${c.c}">${c.v}</div></div>`).join('');
   const catsHolding=Object.keys(CATS_HOLDING);
   const tbody=document.querySelector('#holdingTable tbody');
   const membrosAtivos=DB.membros.filter(m=>m.status==='ativo'||m.status==='isento_fixo');
