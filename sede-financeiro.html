@@ -436,36 +436,6 @@ body.viewer .admin-only{display:none!important}
     <!-- COLUNA ESQUERDA -->
     <div style="display:flex;flex-direction:column;gap:16px">
 
-      <!-- Resumo financeiro do mês -->
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
-        <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
-          <div style="font-size:13px;font-weight:700">📊 Resumo Financeiro</div>
-          <div id="dashMesLabel" style="font-size:11px;color:var(--txt2);background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:2px 10px"></div>
-        </div>
-        <div id="dashMesCards" style="display:grid;grid-template-columns:repeat(4,1fr);gap:0">
-          <div style="padding:14px 16px;border-right:1px solid var(--border)">
-            <div style="font-size:11px;color:var(--txt2);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Entradas — Bar</div>
-            <div id="dEntBar" style="font-size:18px;font-weight:700;color:var(--grn)">—</div>
-            <div id="dEntBarN" style="font-size:11px;color:var(--txt2);margin-top:2px"></div>
-          </div>
-          <div style="padding:14px 16px;border-right:1px solid var(--border)">
-            <div style="font-size:11px;color:var(--txt2);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Saídas — Bar</div>
-            <div id="dSaiBar" style="font-size:18px;font-weight:700;color:var(--red)">—</div>
-            <div id="dSaiBarN" style="font-size:11px;color:var(--txt2);margin-top:2px"></div>
-          </div>
-          <div style="padding:14px 16px;border-right:1px solid var(--border)">
-            <div style="font-size:11px;color:var(--txt2);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Entradas — Holding</div>
-            <div id="dEntHold" style="font-size:18px;font-weight:700;color:var(--grn)">—</div>
-            <div id="dEntHoldN" style="font-size:11px;color:var(--txt2);margin-top:2px"></div>
-          </div>
-          <div style="padding:14px 16px">
-            <div style="font-size:11px;color:var(--txt2);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Saídas — Holding</div>
-            <div id="dSaiHold" style="font-size:18px;font-weight:700;color:var(--red)">—</div>
-            <div id="dSaiHoldN" style="font-size:11px;color:var(--txt2);margin-top:2px"></div>
-          </div>
-        </div>
-      </div>
-
       <!-- Próximos jogos -->
       <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
         <div style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700">⚽ Próximos Jogos</div>
@@ -1517,19 +1487,6 @@ function renderDash(){
       <div style="font-size:11px;color:var(--txt2);margin-top:4px">${k.sub}</div>
     </div>`).join('');
 
-  // ── Resumo do mês ──
-  const barM=DB.extratoBar.filter(t=>getMes(t.data)===mes);
-  const entBarM=barM.filter(t=>t.dir==='entrada').reduce((s,t)=>s+t.valor,0);
-  const saiBarM=barM.filter(t=>t.dir==='saida').reduce((s,t)=>s+t.valor,0);
-  const holdM=DB.extratoHolding.filter(t=>getMes(t.data)===mes);
-  const entHoldM=holdM.filter(t=>t.dir==='entrada').reduce((s,t)=>s+t.valor,0);
-  const saiHoldM=holdM.filter(t=>t.dir==='saida').reduce((s,t)=>s+t.valor,0);
-  const _sv=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val;};
-  _sv('dEntBar',brl(entBarM));_sv('dEntBarN',barM.filter(t=>t.dir==='entrada').length+' tx');
-  _sv('dSaiBar',brl(saiBarM));_sv('dSaiBarN',barM.filter(t=>t.dir==='saida').length+' tx');
-  _sv('dEntHold',brl(entHoldM));_sv('dEntHoldN',holdM.filter(t=>t.dir==='entrada').length+' tx');
-  _sv('dSaiHold',brl(saiHoldM));_sv('dSaiHoldN',holdM.filter(t=>t.dir==='saida').length+' tx');
-
   // ── Próximos jogos ──
   const todayStr=now.toISOString().slice(0,10);
   const proxJogos=typeof SEDE_CAL_SEED!=='undefined'
@@ -1942,6 +1899,7 @@ function editarCatHolding(id,cat){
   }
   salvarDB();
   atualizarLinhaHolding(id);
+  if(cat==='mensalidade')renderMensalidades();
   // Quando categoria muda para comanda → abre modal de vínculo automaticamente
   if(cat==='comanda')abrirVinculoComanda(id);
 }
@@ -2000,6 +1958,7 @@ function vincularMembroHolding(txnId,membroId){
   // Reconstrói a célula: habilita selects se membro selecionado, desabilita se não
   atualizarLinhaHolding(txnId);
   salvarDB();
+  renderMensalidades();
 }
 function vincularMesHolding(txnId,idx,ym){
   if(!IS_ADMIN)return;
@@ -2012,6 +1971,7 @@ function vincularMesHolding(txnId,idx,ym){
   // Reconstrói a célula (exclui o mês escolhido dos outros slots)
   atualizarLinhaHolding(txnId);
   salvarDB();
+  renderMensalidades();
 }
 function aplicarMensalidadesHolding(t){
   if(!t.membroId||!t.mesMensArr||!t.mesMensArr.every(m=>m))return;
