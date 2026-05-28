@@ -1489,21 +1489,27 @@ function renderDash(){
 
   // ── KPIs ──
   const saldoBar=calcSaldoBar(),saldoHolding=calcSaldoHolding();
-  let mensTotal=0,mensPagos=0,mensTotal_n=0;
+  // Mensalidades a receber: soma todos os meses de 2026 até o mês atual que ainda estão pendentes
+  let mensPendVal=0,mensPendN=0,mensPendMembros=new Set();
   const ativos=(DB.membros||[]).filter(m=>m.status!=='fora');
   ativos.forEach(mb=>{
-    mensTotal_n++;
-    const st=(DB.mensalidades[mb.id]||{})[mes];
-    if(st==='pago'){mensTotal+=30;mensPagos++;}
+    const mens=DB.mensalidades[mb.id]||{};
+    MESES_NUM.forEach(m=>{
+      const ym='2026-'+m;
+      if(ym>mes)return; // meses futuros não contam
+      const st=mens[ym];
+      if(!st||st==='pendente'){mensPendVal+=30;mensPendN++;mensPendMembros.add(mb.id);}
+    });
   });
-  let pendente=0,nComandas=0;
-  Object.values(DB.comandas||{}).forEach(items=>items.forEach(i=>{if(i.status==='pendente'){pendente+=calcCmd(i);nComandas++;}}));
+  // Comandas em aberto
+  let cmdPendVal=0,cmdPendN=0;
+  Object.values(DB.comandas||{}).forEach(items=>items.forEach(i=>{if(i.status==='pendente'){cmdPendVal+=calcCmd(i);cmdPendN++;}}));
 
   const kpis=[
-    {l:'Saldo Conta Bar',v:brl(saldoBar),c:saldoBar>=0?'var(--grn)':'var(--red)',sub:'InfinitePay',ico:'🍺'},
-    {l:'Saldo Conta Holding',v:brl(saldoHolding),c:saldoHolding>=0?'var(--grn)':'var(--red)',sub:'PicPay',ico:'🏦'},
-    {l:'Mensalidades — '+mesLabel,v:brl(mensTotal),c:'var(--grn)',sub:mensPagos+' de '+mensTotal_n+' membros',ico:'💰'},
-    {l:'Comandas Pendentes',v:brl(pendente),c:pendente>0?'var(--org)':'var(--grn)',sub:nComandas+' em aberto',ico:'📋'},
+    {l:'Saldo Conta Bar',      v:brl(saldoBar),     c:saldoBar>=0?'var(--grn)':'var(--red)', sub:'CloudWalk / InfinitePay', ico:'🍺'},
+    {l:'Saldo Conta Holding',  v:brl(saldoHolding), c:saldoHolding>=0?'var(--grn)':'var(--red)', sub:'PicPay Empresas', ico:'🏦'},
+    {l:'Comandas em Aberto',   v:brl(cmdPendVal),   c:cmdPendVal>0?'var(--org)':'var(--grn)', sub:cmdPendN+' consumo'+(cmdPendN!==1?'s':'')+' pendente'+(cmdPendN!==1?'s':''), ico:'📋'},
+    {l:'Mensalidades a Receber',v:brl(mensPendVal),  c:mensPendVal>0?'var(--org)':'var(--grn)', sub:mensPendMembros.size+' sócio'+(mensPendMembros.size!==1?'s':'')+' · '+mensPendN+' parcela'+(mensPendN!==1?'s':'')+' em aberto', ico:'💰'},
   ];
   document.getElementById('dashKpis').innerHTML=kpis.map(k=>`
     <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
