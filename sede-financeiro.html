@@ -955,6 +955,7 @@ body.viewer .admin-only{display:none!important}
       <div class="fg"><label>💧 Água (R$5)</label><input type="number" id="cAgua" value="0" min="0" oninput="atualizarTotalCmd()"></div>
       <div class="fg"><label>🥃 Cachaça (R$10)</label><input type="number" id="cCachaca" value="0" min="0" oninput="atualizarTotalCmd()"></div>
     </div>
+    <div class="fg"><label>🍹 Skol Beats (R$6)</label><input type="number" id="cSkolBeats" value="0" min="0" oninput="atualizarTotalCmd()"></div>
     <div class="fg"><label>Desconto (%)</label><input type="number" id="cDesconto" value="0" min="0" max="100" oninput="atualizarTotalCmd()"></div>
     <div id="cTotal" style="font-size:.93rem;font-weight:700;color:var(--acc);margin:3px 0 8px"></div>
     <div class="fg"><label>Status</label>
@@ -2500,7 +2501,7 @@ document.addEventListener('click',()=>{
 // ─── COMANDAS + A RECEBER ───
 function calcCmd(i){
   if(i.valor!=null&&i.desconto==null)return i.valor;
-  const sub=(i.brahma||0)*15+(i.heineken||0)*18+(i.fernet||0)*20+(i.refrig||0)*6+(i.agua||0)*5+(i.cachaca||0)*10;
+  const sub=(i.brahma||0)*15+(i.heineken||0)*18+(i.fernet||0)*20+(i.refrig||0)*6+(i.agua||0)*5+(i.cachaca||0)*10+(i.skolBeats||0)*6;
   return sub*(1-Math.min(Math.max(i.desconto||0,0),100)/100);
 }
 
@@ -2571,6 +2572,7 @@ function renderComandas(){
         if(item.refrig)chips.push(`<span class="cmd-chip">${item.refrig}× Refri</span>`);
         if(item.agua)chips.push(`<span class="cmd-chip">${item.agua}× Água</span>`);
         if(item.cachaca)chips.push(`<span class="cmd-chip">${item.cachaca}× Cachaça</span>`);
+        if(item.skolBeats)chips.push(`<span class="cmd-chip">${item.skolBeats}× Skol Beats</span>`);
         if(item.desconto)chips.push(`<span class="cmd-chip" style="color:var(--grn)">-${item.desconto}%</span>`);
       }
       if(item.descricao)chips.push(`<span class="cmd-chip" style="color:var(--txt2)">${item.descricao}</span>`);
@@ -2712,14 +2714,14 @@ function abrirComanda(jogoId){
   const j=DB.jogos.find(x=>x.id===jogoId);
   document.getElementById('mComandaTit').textContent=`Consumo — ${j?fmtD(j.data):''}`;
   document.getElementById('cMembro').innerHTML=DB.membros.map(m=>`<option value="${m.id}">${m.nome}</option>`).join('');
-  ['cBrahma','cHeineken','cFernet','cRefrig','cAgua','cCachaca'].forEach(id=>document.getElementById(id).value=0);
+  ['cBrahma','cHeineken','cFernet','cRefrig','cAgua','cCachaca','cSkolBeats'].forEach(id=>document.getElementById(id).value=0);
   document.getElementById('cDesconto').value=0;
   document.getElementById('cStatus').value='pendente';document.getElementById('cTotal').textContent='';
   abrirModal('mComanda');
 }
 function atualizarTotalCmd(){
-  const i={brahma:+document.getElementById('cBrahma').value||0,heineken:+document.getElementById('cHeineken').value||0,fernet:+document.getElementById('cFernet').value||0,refrig:+document.getElementById('cRefrig').value||0,agua:+document.getElementById('cAgua').value||0,cachaca:+document.getElementById('cCachaca').value||0,desconto:+document.getElementById('cDesconto').value||0};
-  const sub=i.brahma*15+i.heineken*18+i.fernet*20+i.refrig*6+i.agua*5+i.cachaca*10;
+  const i={brahma:+document.getElementById('cBrahma').value||0,heineken:+document.getElementById('cHeineken').value||0,fernet:+document.getElementById('cFernet').value||0,refrig:+document.getElementById('cRefrig').value||0,agua:+document.getElementById('cAgua').value||0,cachaca:+document.getElementById('cCachaca').value||0,skolBeats:+document.getElementById('cSkolBeats').value||0,desconto:+document.getElementById('cDesconto').value||0};
+  const sub=i.brahma*15+i.heineken*18+i.fernet*20+i.refrig*6+i.agua*5+i.cachaca*10+i.skolBeats*6;
   const total=calcCmd(i);
   const el=document.getElementById('cTotal');
   if(i.desconto>0)el.innerHTML=`Subtotal: ${brl(sub)} &nbsp;|&nbsp; Desconto: ${i.desconto}% &nbsp;|&nbsp; <span style="color:var(--grn)">Total: ${brl(total)}</span>`;
@@ -2728,7 +2730,7 @@ function atualizarTotalCmd(){
 function salvarComanda(){
   if(!IS_ADMIN)return;
   const jogoId=document.getElementById('cJogoId').value;
-  const item={membroId:document.getElementById('cMembro').value,brahma:+document.getElementById('cBrahma').value||0,heineken:+document.getElementById('cHeineken').value||0,fernet:+document.getElementById('cFernet').value||0,refrig:+document.getElementById('cRefrig').value||0,agua:+document.getElementById('cAgua').value||0,cachaca:+document.getElementById('cCachaca').value||0,desconto:+document.getElementById('cDesconto').value||0,status:document.getElementById('cStatus').value};
+  const item={membroId:document.getElementById('cMembro').value,brahma:+document.getElementById('cBrahma').value||0,heineken:+document.getElementById('cHeineken').value||0,fernet:+document.getElementById('cFernet').value||0,refrig:+document.getElementById('cRefrig').value||0,agua:+document.getElementById('cAgua').value||0,cachaca:+document.getElementById('cCachaca').value||0,skolBeats:+document.getElementById('cSkolBeats').value||0,desconto:+document.getElementById('cDesconto').value||0,status:document.getElementById('cStatus').value};
   if(!DB.comandas[jogoId])DB.comandas[jogoId]=[];
   DB.comandas[jogoId].push(item);salvarDB();fecharModal('mComanda');
 }
