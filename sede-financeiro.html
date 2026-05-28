@@ -1496,7 +1496,6 @@ function renderDash(){
     const mens=DB.mensalidades[mb.id]||{};
     MESES_NUM.forEach(m=>{
       const ym='2026-'+m;
-      if(ym>mes)return; // meses futuros não contam
       const st=mens[ym];
       if(!st||st==='pendente'){mensPendVal+=30;mensPendN++;mensPendMembros.add(mb.id);}
     });
