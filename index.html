@@ -2037,7 +2037,7 @@ function processarXLSXBar(wb){
     // 1ª barreira: chave de importação
     if(DB.importKeys.has(key)){skipsDup++;continue;}
     // 2ª barreira: conteúdo (proteção contra mudança de formato de chave)
-    if(DB.extratoBar.some(e=>e.data===data&&e.dir===dir&&Math.abs(e.valor-absVal)<0.005&&e.nome===nome)){skipsDup++;continue;}
+    if(DB.extratoBar.some(e=>e.data===data&&e.hora===hora&&e.dir===dir&&Math.abs(e.valor-absVal)<0.005&&e.nome===nome)){skipsDup++;continue;}
     const cat=categorizarBar(tipo,nome,detalhe,valor);
     txns.push({id:uid(),data,hora,tipo,nome,detalhe,valor:absVal,dir,cat:cat.cat,desc:cat.desc,key});
   }
