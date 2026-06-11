@@ -693,15 +693,15 @@ body.viewer .admin-only{display:none!important}
   <div id="ccSubTab-parcelas">
     <div class="sh" style="margin-top:0;padding-top:12px">
       <h2>Controle de Parcelas</h2>
-      <span style="font-size:.8rem;color:var(--txt2)">10 parcelas · R$ 5.000,00/mês · último dia de cada mês</span>
+      <span style="font-size:.8rem;color:var(--txt2)">12 parcelas · R$ 4.166,67/mês · primeiro dia de cada mês</span>
     </div>
     <div class="tw"><table id="ccParcelasTable">
       <thead><tr>
         <th>#</th><th>Vencimento</th>
-        <th class="tr">Harry<br><small style="font-weight:400">R$500</small></th>
-        <th class="tr">Jackson<br><small style="font-weight:400">R$1.500</small></th>
-        <th class="tr">Toninho<br><small style="font-weight:400">R$1.500</small></th>
-        <th class="tr">Portella<br><small style="font-weight:400">R$1.500</small></th>
+        <th class="tr">Antônio Almeida<br><small style="font-weight:400">R$1.250</small></th>
+        <th class="tr">Jackson Prado<br><small style="font-weight:400">R$1.250</small></th>
+        <th class="tr">Eduardo Portella<br><small style="font-weight:400">R$1.250</small></th>
+        <th class="tr">Felipe Azevedo<br><small style="font-weight:400">R$416,67</small></th>
         <th style="text-align:center">Status</th>
       </tr></thead>
       <tbody id="ccParcelasTbody"></tbody>
@@ -1192,8 +1192,8 @@ function parseFromFirebase(data){
   r.saldoAberturaBar=data.saldoAberturaBar||0;
   r.saldoAberturaHolding=data.saldoAberturaHolding||0;
   r.eventosCal=data.eventosCal||{};
-  if(!data.compracasa||!data.compracasa._initDone){
-    r.compracasa={movimentacoes:getDefaultMovCC(),parcelasPagas:{},_initDone:true};
+  if(!data.compracasa||!data.compracasa._v2){
+    r.compracasa={movimentacoes:getDefaultMovCC(),parcelasPagas:getDefaultParcelasPagas(),_initDone:true,_v2:true};
   }else{
     r.compracasa=data.compracasa;
     r.compracasa.movimentacoes=toArr(r.compracasa.movimentacoes||[]);
@@ -3706,35 +3706,114 @@ function renderEstoque(){
 
 // ─── COMPRA CASA ───
 const CC_PARCELAS=[
-  {num:1,data:'2026-06-30'},{num:2,data:'2026-07-31'},{num:3,data:'2026-08-31'},
-  {num:4,data:'2026-09-30'},{num:5,data:'2026-10-31'},{num:6,data:'2026-11-30'},
-  {num:7,data:'2026-12-31'},{num:8,data:'2027-01-31'},{num:9,data:'2027-02-28'},
-  {num:10,data:'2027-03-31'}
+  {num:1,data:'2026-03-01'},{num:2,data:'2026-04-01'},{num:3,data:'2026-05-01'},
+  {num:4,data:'2026-06-01'},{num:5,data:'2026-07-01'},{num:6,data:'2026-08-01'},
+  {num:7,data:'2026-09-01'},{num:8,data:'2026-10-01'},{num:9,data:'2026-11-01'},
+  {num:10,data:'2026-12-01'},{num:11,data:'2027-01-01'},{num:12,data:'2027-02-01'}
 ];
 const CC_PAGADORES=[
-  {nome:'Harry',valor:500},{nome:'Jackson',valor:1500},
-  {nome:'Toninho',valor:1500},{nome:'Portella',valor:1500}
+  {nome:'Antônio Almeida',valor:1250},
+  {nome:'Jackson Prado',valor:1250},
+  {nome:'Eduardo Portella',valor:1250},
+  {nome:'Felipe Azevedo',valor:416.67}
 ];
 const CC_CATS={
   aporte:'Aporte',rendimento:'Rendimento',pgto_claudia:'Pgto. Cláudia',
   pgto_emolumentos:'Pgto. Emolumentos',aluguel_caixa:'Aluguel Caixa',
-  amortizacao:'Amortização',itbi:'ITBI',troco_itbi:'Troco ITBI',
+  amortizacao:'Amortização',itbi:'ITBI',troco_itbi:'Troco / Reembolso',
   custas_escritura:'Custas Escritura'
 };
-const CC_CAT_DIR={aporte:'e',rendimento:'e',troco_itbi:'e'};
+const CC_CAT_DIR={aporte:'e',rendimento:'e',troco_itbi:'e',aluguel_caixa:'e'};
+
+function getDefaultParcelasPagas(){
+  return {
+    1:{'Antônio Almeida':true,'Jackson Prado':true,'Felipe Azevedo':true},
+    2:{'Antônio Almeida':true,'Felipe Azevedo':true},
+    3:{'Antônio Almeida':true,'Felipe Azevedo':true},
+    4:{'Felipe Azevedo':true,'Jackson Prado':true}
+  };
+}
 
 function getDefaultMovCC(){
-  const aportes=[
-    {membro:'Zap',valor:15000},{membro:'Testoni',valor:15000},
-    {membro:'Batuta',valor:15000},{membro:'Cauduro',valor:15000},
-    {membro:'Luiggi',valor:15000},{membro:'Guilherme Dresch',valor:15000},
-    {membro:'João Fischer',valor:5000},{membro:'Thales da Silva',valor:5000}
+  return [
+    {id:'cc_0',data:'2026-02-14',cat:'aporte',desc:'Aporte entrada',membro:'Guilherme Dresch',valor:2000,dir:'e'},
+    {id:'cc_1',data:'2026-02-15',cat:'aporte',desc:'Aporte entrada',membro:'Guilherme Dresch',valor:1000,dir:'e'},
+    {id:'cc_2',data:'2026-02-18',cat:'aporte',desc:'Aporte entrada',membro:'Guilherme Dresch',valor:2000,dir:'e'},
+    {id:'cc_3',data:'2026-02-18',cat:'aporte',desc:'Aporte entrada',membro:'Guilherme Dresch',valor:3000,dir:'e'},
+    {id:'cc_4',data:'2026-02-19',cat:'aporte',desc:'Aporte entrada',membro:'João Fischer',valor:5000,dir:'e'},
+    {id:'cc_5',data:'2026-02-19',cat:'aporte',desc:'Aporte entrada',membro:'Thales da Silva',valor:5000,dir:'e'},
+    {id:'cc_6',data:'2026-02-19',cat:'aporte',desc:'Aporte entrada',membro:'Luiggi Bertaco',valor:15000,dir:'e'},
+    {id:'cc_7',data:'2026-02-19',cat:'aporte',desc:'Aporte entrada',membro:'Guilherme Dresch',valor:2000,dir:'e'},
+    {id:'cc_8',data:'2026-02-19',cat:'aporte',desc:'Aporte entrada',membro:'Guilherme Dresch',valor:2000,dir:'e'},
+    {id:'cc_9',data:'2026-02-19',cat:'aporte',desc:'Aporte entrada',membro:'Gabriel Cauduro',valor:15000,dir:'e'},
+    {id:'cc_10',data:'2026-02-19',cat:'aporte',desc:'Aporte entrada',membro:'Guilherme Dresch',valor:3000,dir:'e'},
+    {id:'cc_11',data:'2026-02-19',cat:'aporte',desc:'Aporte entrada',membro:'Yan (Batuta)',valor:14978.33,dir:'e'},
+    {id:'cc_12',data:'2026-02-19',cat:'aporte',desc:'Aporte entrada',membro:'Yan (Batuta)',valor:21.67,dir:'e'},
+    {id:'cc_13',data:'2026-02-24',cat:'aporte',desc:'Aporte entrada',membro:'Mauricio Szapszay',valor:15000,dir:'e'},
+    {id:'cc_14',data:'2026-02-24',cat:'aporte',desc:'Aporte entrada',membro:'Vinícius Testoni',valor:5000,dir:'e'},
+    {id:'cc_15',data:'2026-02-24',cat:'aporte',desc:'Aporte entrada',membro:'Vinícius Testoni',valor:10000,dir:'e'},
+    {id:'cc_16',data:'2026-02-24',cat:'rendimento',desc:'Rendimento',membro:'',valor:76.98,dir:'e'},
+    {id:'cc_17',data:'2026-02-24',cat:'amortizacao',desc:'Pgto. Dinheiro Espécie',membro:'',valor:10000,dir:'s'},
+    {id:'cc_18',data:'2026-02-24',cat:'amortizacao',desc:'Pgto. Nubank',membro:'',valor:55000,dir:'s'},
+    {id:'cc_19',data:'2026-02-24',cat:'amortizacao',desc:'Pgto. PagBank',membro:'',valor:35000,dir:'s'},
+    {id:'cc_20',data:'2026-02-24',cat:'pgto_emolumentos',desc:'Pagamento Emolumentos',membro:'',valor:74.77,dir:'s'},
+    {id:'cc_21',data:'2026-03-02',cat:'aporte',desc:'Parcela 1 — Felipe Azevedo',membro:'Felipe Azevedo',valor:416.67,dir:'e'},
+    {id:'cc_22',data:'2026-03-02',cat:'aporte',desc:'Parcelas 1+2+3 — Antônio Almeida',membro:'Antônio Almeida',valor:3750,dir:'e'},
+    {id:'cc_23',data:'2026-03-03',cat:'rendimento',desc:'Rendimento',membro:'',valor:1.81,dir:'e'},
+    {id:'cc_24',data:'2026-03-04',cat:'rendimento',desc:'Rendimento',membro:'',valor:1.81,dir:'e'},
+    {id:'cc_25',data:'2026-03-04',cat:'aporte',desc:'Aporte extra',membro:'Filipe Garcia',valor:5000,dir:'e'},
+    {id:'cc_26',data:'2026-03-04',cat:'aporte',desc:'Parcela 1 — Jackson Prado',membro:'Jackson Prado',valor:1250,dir:'e'},
+    {id:'cc_27',data:'2026-03-05',cat:'rendimento',desc:'Rendimento',membro:'',valor:4.54,dir:'e'},
+    {id:'cc_28',data:'2026-03-06',cat:'rendimento',desc:'Rendimento',membro:'',valor:4.54,dir:'e'},
+    {id:'cc_29',data:'2026-03-06',cat:'aporte',desc:'Aporte',membro:'Peixoto',valor:2500,dir:'e'},
+    {id:'cc_30',data:'2026-03-09',cat:'rendimento',desc:'Rendimento',membro:'',valor:5.62,dir:'e'},
+    {id:'cc_31',data:'2026-03-10',cat:'rendimento',desc:'Rendimento',membro:'',valor:5.63,dir:'e'},
+    {id:'cc_32',data:'2026-03-11',cat:'rendimento',desc:'Rendimento',membro:'',valor:5.63,dir:'e'},
+    {id:'cc_33',data:'2026-03-12',cat:'rendimento',desc:'Rendimento',membro:'',valor:5.63,dir:'e'},
+    {id:'cc_34',data:'2026-03-13',cat:'rendimento',desc:'Rendimento',membro:'',valor:5.64,dir:'e'},
+    {id:'cc_35',data:'2026-03-16',cat:'rendimento',desc:'Rendimento',membro:'',valor:5.64,dir:'e'},
+    {id:'cc_36',data:'2026-03-17',cat:'rendimento',desc:'Rendimento',membro:'',valor:5.65,dir:'e'},
+    {id:'cc_37',data:'2026-03-18',cat:'rendimento',desc:'Rendimento',membro:'',valor:5.65,dir:'e'},
+    {id:'cc_38',data:'2026-03-18',cat:'aluguel_caixa',desc:'Aluguel Caixa Baixa',membro:'',valor:800,dir:'e'},
+    {id:'cc_39',data:'2026-03-19',cat:'rendimento',desc:'Rendimento',membro:'',valor:5.95,dir:'e'},
+    {id:'cc_40',data:'2026-03-20',cat:'rendimento',desc:'Rendimento',membro:'',valor:5.90,dir:'e'},
+    {id:'cc_41',data:'2026-03-23',cat:'rendimento',desc:'Rendimento',membro:'',valor:5.91,dir:'e'},
+    {id:'cc_42',data:'2026-03-24',cat:'rendimento',desc:'Rendimento',membro:'',valor:5.91,dir:'e'},
+    {id:'cc_43',data:'2026-03-25',cat:'rendimento',desc:'Rendimento',membro:'',valor:5.92,dir:'e'},
+    {id:'cc_44',data:'2026-03-26',cat:'rendimento',desc:'Rendimento',membro:'',valor:5.92,dir:'e'},
+    {id:'cc_45',data:'2026-03-27',cat:'rendimento',desc:'Rendimento',membro:'',valor:5.93,dir:'e'},
+    {id:'cc_46',data:'2026-03-28',cat:'aporte',desc:'Parcela 2 — Felipe Azevedo',membro:'Felipe Azevedo',valor:416.67,dir:'e'},
+    {id:'cc_47',data:'2026-03-30',cat:'rendimento',desc:'Rendimento',membro:'',valor:6.08,dir:'e'},
+    {id:'cc_48',data:'2026-03-31',cat:'rendimento',desc:'Rendimento',membro:'',valor:6.11,dir:'e'},
+    {id:'cc_49',data:'2026-04-01',cat:'rendimento',desc:'Rendimento',membro:'',valor:6.11,dir:'e'},
+    {id:'cc_50',data:'2026-04-02',cat:'rendimento',desc:'Rendimento',membro:'',valor:6.11,dir:'e'},
+    {id:'cc_51',data:'2026-04-02',cat:'itbi',desc:'ITBI',membro:'',valor:7500,dir:'s'},
+    {id:'cc_52',data:'2026-04-06',cat:'rendimento',desc:'Rendimento',membro:'',valor:3.12,dir:'e'},
+    {id:'cc_53',data:'2026-04-07',cat:'rendimento',desc:'Rendimento',membro:'',valor:2.91,dir:'e'},
+    {id:'cc_54',data:'2026-04-08',cat:'rendimento',desc:'Rendimento',membro:'',valor:2.91,dir:'e'},
+    {id:'cc_55',data:'2026-04-09',cat:'rendimento',desc:'Rendimento',membro:'',valor:2.91,dir:'e'},
+    {id:'cc_56',data:'2026-04-10',cat:'rendimento',desc:'Rendimento',membro:'',valor:2.91,dir:'e'},
+    {id:'cc_57',data:'2026-04-13',cat:'rendimento',desc:'Rendimento',membro:'',valor:2.99,dir:'e'},
+    {id:'cc_58',data:'2026-04-14',cat:'rendimento',desc:'Rendimento',membro:'',valor:2.91,dir:'e'},
+    {id:'cc_59',data:'2026-04-15',cat:'rendimento',desc:'Rendimento',membro:'',valor:2.92,dir:'e'},
+    {id:'cc_60',data:'2026-04-16',cat:'rendimento',desc:'Rendimento',membro:'',valor:2.92,dir:'e'},
+    {id:'cc_61',data:'2026-04-16',cat:'custas_escritura',desc:'Custas Escritura',membro:'',valor:4838.94,dir:'s'},
+    {id:'cc_62',data:'2026-04-17',cat:'rendimento',desc:'Rendimento',membro:'',valor:0.84,dir:'e'},
+    {id:'cc_63',data:'2026-04-20',cat:'rendimento',desc:'Rendimento',membro:'',valor:0.84,dir:'e'},
+    {id:'cc_64',data:'2026-04-22',cat:'rendimento',desc:'Rendimento',membro:'',valor:0.84,dir:'e'},
+    {id:'cc_65',data:'2026-04-23',cat:'rendimento',desc:'Rendimento',membro:'',valor:0.84,dir:'e'},
+    {id:'cc_66',data:'2026-04-24',cat:'rendimento',desc:'Rendimento',membro:'',valor:0.84,dir:'e'},
+    {id:'cc_67',data:'2026-04-24',cat:'troco_itbi',desc:'Troco Custas Escritura',membro:'',valor:821.91,dir:'e'},
+    {id:'cc_68',data:'2026-04-25',cat:'aluguel_caixa',desc:'Reembolso Aluguel Caixa Baixa',membro:'',valor:800,dir:'s'},
+    {id:'cc_69',data:'2026-05-08',cat:'rendimento',desc:'Rendimento',membro:'',valor:2.48,dir:'e'},
+    {id:'cc_70',data:'2026-05-08',cat:'aporte',desc:'Parcela 3 — Felipe Azevedo',membro:'Felipe Azevedo',valor:416.67,dir:'e'},
+    {id:'cc_71',data:'2026-06-02',cat:'rendimento',desc:'Rendimento',membro:'',valor:21.03,dir:'e'},
+    {id:'cc_72',data:'2026-06-03',cat:'aporte',desc:'Parcela 4 — Jackson Prado',membro:'Jackson Prado',valor:1500,dir:'e'},
+    {id:'cc_73',data:'2026-06-03',cat:'rendimento',desc:'Rendimento',membro:'',valor:1.10,dir:'e'},
+    {id:'cc_74',data:'2026-06-10',cat:'rendimento',desc:'Rendimento',membro:'',valor:5.10,dir:'e'},
+    {id:'cc_75',data:'2026-06-11',cat:'aporte',desc:'Parcela 4 — Felipe Azevedo',membro:'Felipe Azevedo',valor:416.67,dir:'e'},
+    {id:'cc_76',data:'2026-06-11',cat:'rendimento',desc:'Rendimento',membro:'',valor:1.27,dir:'e'},
   ];
-  return aportes.map((a,i)=>({
-    id:'cc_ini_'+i,data:'2026-01-01',
-    desc:'Aporte entrada — '+a.membro,
-    cat:'aporte',membro:a.membro,valor:a.valor,dir:'e'
-  }));
 }
 
 let _ccSubTab='parcelas';
@@ -3770,8 +3849,8 @@ function renderCompracasa(){
     <div class="card"><div class="cl">Total aportado</div><div class="cv green">${brl(totalE)}</div></div>
     <div class="card"><div class="cl">Total saído</div><div class="cv" style="color:var(--red)">${brl(totalS)}</div></div>
     <div class="card"><div class="cl">Saldo</div><div class="cv ${saldo>=0?'green':''}" style="${saldo<0?'color:var(--red)':''}">${brl(saldo)}</div></div>
-    <div class="card"><div class="cl">Parcelas completas</div><div class="cv">${nCompletas} / 10</div></div>
-    <div class="card"><div class="cl">Pagamentos recebidos</div><div class="cv">${nPagamentos} / ${CC_PAGADORES.length*10}</div></div>`;
+    <div class="card"><div class="cl">Parcelas completas</div><div class="cv">${nCompletas} / ${CC_PARCELAS.length}</div></div>
+    <div class="card"><div class="cl">Pagamentos recebidos</div><div class="cv">${nPagamentos} / ${CC_PAGADORES.length*CC_PARCELAS.length}</div></div>`;
 
   // ── sub-tabs ──
   document.getElementById('ccSubTabs').innerHTML=
@@ -3804,15 +3883,19 @@ function renderCompracasa(){
       <td style="text-align:center">${statusBadge}</td></tr>`;
   });
   // footer totais
-  const totPag=CC_PAGADORES.reduce((s,pg)=>s+pg.valor*10,0);
+  const totPag=CC_PAGADORES.reduce((s,pg)=>s+pg.valor*CC_PARCELAS.length,0);
   pRows+=`<tr style="background:var(--card2);font-weight:700">
-    <td colspan="2" style="font-size:.78rem">Total (10 parcelas)</td>
-    ${CC_PAGADORES.map(pg=>`<td style="text-align:center;font-size:.78rem">${brl(pg.valor*10)}</td>`).join('')}
+    <td colspan="2" style="font-size:.78rem">Total (${CC_PARCELAS.length} parcelas)</td>
+    ${CC_PAGADORES.map(pg=>`<td style="text-align:center;font-size:.78rem">${brl(pg.valor*CC_PARCELAS.length)}</td>`).join('')}
     <td style="text-align:center;font-size:.78rem">${brl(totPag)}</td></tr>`;
   document.getElementById('ccParcelasTbody').innerHTML=pRows;
 
   // ── movimentações ──
-  const sorted=[...movs].sort((a,b)=>b.data.localeCompare(a.data));
+  const sorted=movs.map((m,i)=>({m,i})).sort((a,b)=>{
+    const d=b.m.data.localeCompare(a.m.data);
+    if(d!==0)return d;
+    return b.i-a.i;
+  }).map(({m})=>m);
   let mRows=sorted.length===0
     ?`<tr><td colspan="7" style="text-align:center;color:var(--txt2);padding:16px">Nenhuma movimentação registrada</td></tr>`:'';
   sorted.forEach(m=>{
@@ -3833,8 +3916,8 @@ function quitarPessoaCC(num,nome){
   const pg=CC_PAGADORES.find(x=>x.nome===nome);
   if(!pg)return;
   const p=CC_PARCELAS.find(x=>x.num===num);
-  if(!confirm(`Registrar pagamento de ${nome} — Parcela ${num}/10 (${fmtD(p.data)}) — ${brl(pg.valor)}?`))return;
-  if(!DB.compracasa)DB.compracasa={movimentacoes:[],parcelasPagas:{},_initDone:true};
+  if(!confirm(`Registrar pagamento de ${nome} — Parcela ${num}/${CC_PARCELAS.length} (${fmtD(p.data)}) — ${brl(pg.valor)}?`))return;
+  if(!DB.compracasa)DB.compracasa={movimentacoes:[],parcelasPagas:{},_initDone:true,_v2:true};
   if(!DB.compracasa.parcelasPagas[num])DB.compracasa.parcelasPagas[num]={};
   DB.compracasa.parcelasPagas[num][nome]=true;
   DB.compracasa.movimentacoes.push({
@@ -3868,7 +3951,7 @@ function salvarMovCC(){
   const valor=parseFloat(document.getElementById('ccMovValor').value||'0');
   if(!data||!cat||valor<=0){alert('Preencha data, categoria e valor.');return;}
   const dir=CC_CAT_DIR[cat]||'s';
-  if(!DB.compracasa)DB.compracasa={movimentacoes:[],parcelasPagas:{},_initDone:true};
+  if(!DB.compracasa)DB.compracasa={movimentacoes:[],parcelasPagas:{},_initDone:true,_v2:true};
   DB.compracasa.movimentacoes.push({id:uid(),data,cat,desc,membro,valor,dir});
   salvarDB();fecharModal('mNovaMovCC');renderCompracasa();
 }
@@ -3901,27 +3984,29 @@ function removerMovCC(id){
     <div class="fg" id="ccMovMembroRow"><label>Membro</label>
       <select id="ccMovMembro">
         <option value="">— selecione —</option>
-        <option>João Fischer</option>
-        <option>Thales da Silva</option>
-        <option>Luiggi Bertaco</option>
-        <option>Guilherme Dresch</option>
-        <option>Gabriel Cauduro</option>
-        <option>Yan de Assunção</option>
-        <option>Mauricio Szapszay</option>
-        <option>Vinícius Testoni</option>
-        <option>Antônio Almeida</option>
-        <option>Jackson Prado</option>
-        <option>Eduardo Portella</option>
-        <option>Felipe Azevedo</option>
-        <option>Zap</option>
-        <option>Batuta</option>
-        <option>Harry</option>
-        <option>Toninho</option>
+        <optgroup label="Entrada (aportes)">
+          <option>Mauricio Szapszay</option>
+          <option>Vinícius Testoni</option>
+          <option>Yan (Batuta)</option>
+          <option>Gabriel Cauduro</option>
+          <option>Luiggi Bertaco</option>
+          <option>Guilherme Dresch</option>
+          <option>João Fischer</option>
+          <option>Thales da Silva</option>
+          <option>Filipe Garcia</option>
+          <option>Peixoto</option>
+        </optgroup>
+        <optgroup label="Parcelas">
+          <option>Antônio Almeida</option>
+          <option>Jackson Prado</option>
+          <option>Eduardo Portella</option>
+          <option>Felipe Azevedo</option>
+        </optgroup>
       </select>
     </div>
     <div class="fg"><label>Descrição <small style="color:var(--txt2)">(opcional)</small></label><input type="text" id="ccMovDesc" placeholder="Ex: Parcela 1/10"></div>
     <div class="fg"><label>Valor (R$)</label><input type="number" id="ccMovValor" step="0.01" min="0" placeholder="0,00"></div>
-    <div class="info" style="font-size:.75rem;margin-bottom:0">Aportes, rendimentos e troco ITBI são registrados como entrada; demais categorias como saída.</div>
+    <div class="info" style="font-size:.75rem;margin-bottom:0">Aportes, rendimentos, aluguel e troco/reembolso são entrada; amortizações, ITBI, custas e emolumentos são saída.</div>
     <div class="mactions">
       <button class="btn btn-ghost" onclick="fecharModal('mNovaMovCC')">Cancelar</button>
       <button class="btn btn-primary" onclick="salvarMovCC()">Salvar</button>
