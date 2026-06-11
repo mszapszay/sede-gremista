@@ -3907,7 +3907,10 @@ function renderCompracasa(){
       <td style="color:var(--txt2)">${m.membro||''}</td>
       <td class="tr" style="color:var(--grn)">${m.dir==='e'?brl(m.valor):''}</td>
       <td class="tr" style="color:var(--red)">${m.dir==='s'?brl(m.valor):''}</td>
-      <td class="admin-only"><button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="removerMovCC('${m.id}')">✕</button></td></tr>`;
+      <td class="admin-only" style="white-space:nowrap">
+        <button class="btn btn-ghost btn-sm" style="color:var(--txt2)" onclick="editarMovCC('${m.id}')">✏</button>
+        <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="removerMovCC('${m.id}')">✕</button>
+      </td></tr>`;
   });
   document.getElementById('ccMovTbody').innerHTML=mRows;
 }
@@ -3928,12 +3931,32 @@ function quitarPessoaCC(num,nome){
   salvarDB();renderCompracasa();
 }
 
+let _ccEditId=null;
+
 function abrirModalNovaMovCC(){
+  _ccEditId=null;
+  document.querySelector('#mNovaMovCC h3').textContent='Nova Movimentação — Compra Casa';
   document.getElementById('ccMovData').value=new Date().toISOString().slice(0,10);
   document.getElementById('ccMovCat').value='aporte';
   document.getElementById('ccMovDesc').value='';
   document.getElementById('ccMovValor').value='';
   document.getElementById('ccMovMembro').value='';
+  document.getElementById('ccMovDir').value='e';
+  toggleMembroCC();
+  abrirModal('mNovaMovCC');
+}
+
+function editarMovCC(id){
+  const m=(DB.compracasa.movimentacoes||[]).find(x=>x.id===id);
+  if(!m)return;
+  _ccEditId=id;
+  document.querySelector('#mNovaMovCC h3').textContent='Editar Movimentação';
+  document.getElementById('ccMovData').value=m.data;
+  document.getElementById('ccMovCat').value=m.cat;
+  document.getElementById('ccMovDesc').value=m.desc||'';
+  document.getElementById('ccMovMembro').value=m.membro||'';
+  document.getElementById('ccMovValor').value=m.valor;
+  document.getElementById('ccMovDir').value=m.dir||'e';
   toggleMembroCC();
   abrirModal('mNovaMovCC');
 }
@@ -3941,6 +3964,7 @@ function abrirModalNovaMovCC(){
 function toggleMembroCC(){
   const cat=document.getElementById('ccMovCat').value;
   document.getElementById('ccMovMembroRow').style.display=cat==='aporte'?'':'none';
+  if(!_ccEditId) document.getElementById('ccMovDir').value=CC_CAT_DIR[cat]||'s';
 }
 
 function salvarMovCC(){
@@ -3949,10 +3973,15 @@ function salvarMovCC(){
   const desc=document.getElementById('ccMovDesc').value.trim();
   const membro=cat==='aporte'?document.getElementById('ccMovMembro').value:'';
   const valor=parseFloat(document.getElementById('ccMovValor').value||'0');
+  const dir=document.getElementById('ccMovDir').value||'e';
   if(!data||!cat||valor<=0){alert('Preencha data, categoria e valor.');return;}
-  const dir=CC_CAT_DIR[cat]||'s';
   if(!DB.compracasa)DB.compracasa={movimentacoes:[],parcelasPagas:{},_initDone:true,_v2:true};
-  DB.compracasa.movimentacoes.push({id:uid(),data,cat,desc,membro,valor,dir});
+  if(_ccEditId){
+    const idx=DB.compracasa.movimentacoes.findIndex(m=>m.id===_ccEditId);
+    if(idx>=0)DB.compracasa.movimentacoes[idx]={...DB.compracasa.movimentacoes[idx],data,cat,desc,membro,valor,dir};
+  }else{
+    DB.compracasa.movimentacoes.push({id:uid(),data,cat,desc,membro,valor,dir});
+  }
   salvarDB();fecharModal('mNovaMovCC');renderCompracasa();
 }
 
@@ -4004,9 +4033,14 @@ function removerMovCC(id){
         </optgroup>
       </select>
     </div>
-    <div class="fg"><label>Descrição <small style="color:var(--txt2)">(opcional)</small></label><input type="text" id="ccMovDesc" placeholder="Ex: Parcela 1/10"></div>
+    <div class="fg"><label>Descrição <small style="color:var(--txt2)">(opcional)</small></label><input type="text" id="ccMovDesc" placeholder="Ex: Parcela 1/12"></div>
     <div class="fg"><label>Valor (R$)</label><input type="number" id="ccMovValor" step="0.01" min="0" placeholder="0,00"></div>
-    <div class="info" style="font-size:.75rem;margin-bottom:0">Aportes, rendimentos, aluguel e troco/reembolso são entrada; amortizações, ITBI, custas e emolumentos são saída.</div>
+    <div class="fg"><label>Direção</label>
+      <select id="ccMovDir">
+        <option value="e">Entrada (+)</option>
+        <option value="s">Saída (−)</option>
+      </select>
+    </div>
     <div class="mactions">
       <button class="btn btn-ghost" onclick="fecharModal('mNovaMovCC')">Cancelar</button>
       <button class="btn btn-primary" onclick="salvarMovCC()">Salvar</button>
