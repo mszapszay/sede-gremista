@@ -686,43 +686,34 @@ body.viewer .admin-only{display:none!important}
   </div>
   <div class="cards" id="ccCards"></div>
 
-  <!-- sub-tabs -->
-  <div class="sc-tabs" id="ccSubTabs" style="margin-top:16px;margin-bottom:0"></div>
-
-  <!-- sub-page: parcelas -->
-  <div id="ccSubTab-parcelas">
-    <div class="sh" style="margin-top:0;padding-top:12px">
-      <h2>Controle de Parcelas</h2>
-      <span style="font-size:.8rem;color:var(--txt2)">12 parcelas · R$ 4.166,67/mês · primeiro dia de cada mês</span>
-    </div>
-    <div class="tw"><table id="ccParcelasTable">
-      <thead><tr>
-        <th>#</th><th>Vencimento</th>
-        <th class="tr">Antônio Almeida<br><small style="font-weight:400">R$1.250</small></th>
-        <th class="tr">Jackson Prado<br><small style="font-weight:400">R$1.250</small></th>
-        <th class="tr">Eduardo Portella<br><small style="font-weight:400">R$1.250</small></th>
-        <th class="tr">Felipe Azevedo<br><small style="font-weight:400">R$416,67</small></th>
-        <th style="text-align:center">Status</th>
-      </tr></thead>
-      <tbody id="ccParcelasTbody"></tbody>
-    </table></div>
+  <!-- investidores -->
+  <div class="sh" style="margin-top:16px;padding-top:12px">
+    <h2>Situação por investidor</h2>
   </div>
+  <div class="tw"><table id="ccInvestTable">
+    <thead><tr>
+      <th>Investidor</th>
+      <th class="tr">Meta</th>
+      <th class="tr">Realizado</th>
+      <th class="tr">Em aberto</th>
+      <th>Progresso</th>
+    </tr></thead>
+    <tbody id="ccInvestTbody"></tbody>
+  </table></div>
 
-  <!-- sub-page: movimentações -->
-  <div id="ccSubTab-movimentacoes" style="display:none">
-    <div class="sh" style="margin-top:0;padding-top:12px">
-      <h2>Movimentações</h2>
-      <button class="btn btn-grn btn-sm admin-only" onclick="abrirModalNovaMovCC()">+ Nova movimentação</button>
-    </div>
-    <div class="tw"><table id="ccMovTable">
-      <thead><tr>
-        <th>Data</th><th>Descrição</th><th>Categoria</th><th>Membro</th>
-        <th class="tr">Entrada</th><th class="tr">Saída</th>
-        <th class="admin-only"></th>
-      </tr></thead>
-      <tbody id="ccMovTbody"></tbody>
-    </table></div>
+  <!-- movimentações -->
+  <div class="sh" style="margin-top:24px;padding-top:12px">
+    <h2>Movimentações</h2>
+    <button class="btn btn-grn btn-sm admin-only" onclick="abrirModalNovaMovCC()">+ Nova movimentação</button>
   </div>
+  <div class="tw"><table id="ccMovTable">
+    <thead><tr>
+      <th>Data</th><th>Descrição</th><th>Categoria</th><th>Membro</th>
+      <th class="tr">Entrada</th><th class="tr">Saída</th>
+      <th class="admin-only"></th>
+    </tr></thead>
+    <tbody id="ccMovTbody"></tbody>
+  </table></div>
 </div>
 
 <!-- MEMBROS -->
@@ -3717,6 +3708,22 @@ const CC_PAGADORES=[
   {nome:'Eduardo Portella',valor:1250},
   {nome:'Felipe Azevedo',valor:416.67}
 ];
+const CC_INVESTIDORES=[
+  {nome:'Antônio Almeida',meta:15000},
+  {nome:'Jackson Prado',meta:15000},
+  {nome:'Eduardo Portella',meta:15000},
+  {nome:'Felipe Azevedo',meta:5000},
+  {nome:'Mauricio Szapszay',meta:15000},
+  {nome:'Vinícius Testoni',meta:15000},
+  {nome:'Yan (Batuta)',meta:15000},
+  {nome:'Gabriel Cauduro',meta:15000},
+  {nome:'Luiggi Bertaco',meta:15000},
+  {nome:'Guilherme Dresch',meta:15000},
+  {nome:'João Fischer',meta:5000},
+  {nome:'Thales da Silva',meta:5000},
+  {nome:'Filipe Garcia',meta:5000},
+  {nome:'Peixoto',meta:2500},
+];
 const CC_CATS={
   aporte:'Aporte',rendimento:'Rendimento',pgto_claudia:'Pgto. Cláudia',
   pgto_emolumentos:'Pgto. Emolumentos',aluguel_caixa:'Aluguel Caixa',
@@ -3816,79 +3823,51 @@ function getDefaultMovCC(){
   ];
 }
 
-let _ccSubTab='parcelas';
-
-function showCCTab(name){
-  _ccSubTab=name;
-  ['parcelas','movimentacoes'].forEach(t=>{
-    document.getElementById('ccSubTab-'+t).style.display=t===name?'':'none';
-  });
-  document.querySelectorAll('#ccSubTabs .sc-tab').forEach(b=>{
-    b.classList.toggle('active',b.dataset.tab===name);
-  });
-}
-
 function renderCompracasa(){
-  const cc=DB.compracasa||{movimentacoes:[],parcelasPagas:{}};
+  const cc=DB.compracasa||{movimentacoes:[]};
   const movs=cc.movimentacoes||[];
-  const pPagas=cc.parcelasPagas||{};
 
   // ── cards ──
   const totalE=movs.filter(m=>m.dir==='e').reduce((s,m)=>s+Number(m.valor||0),0);
   const totalS=movs.filter(m=>m.dir==='s').reduce((s,m)=>s+Number(m.valor||0),0);
   const saldo=totalE-totalS;
-  let nCompletas=0,nPagamentos=0;
-  CC_PARCELAS.forEach(p=>{
-    const pg=pPagas[p.num]||{};
-    const cnt=CC_PAGADORES.filter(x=>pg[x.nome]).length;
-    nPagamentos+=cnt;
-    if(cnt===CC_PAGADORES.length)nCompletas++;
+  const realPorMembro={};
+  movs.filter(m=>m.cat==='aporte'&&m.membro).forEach(m=>{
+    realPorMembro[m.membro]=(realPorMembro[m.membro]||0)+Number(m.valor||0);
   });
+  const totalEmAberto=CC_INVESTIDORES.reduce((s,inv)=>s+Math.max(0,inv.meta-(realPorMembro[inv.nome]||0)),0);
   document.getElementById('ccCards').innerHTML=`
     <div class="card"><div class="cl">Total do imóvel</div><div class="cv">${brl(150000)}</div></div>
     <div class="card"><div class="cl">Total aportado</div><div class="cv green">${brl(totalE)}</div></div>
     <div class="card"><div class="cl">Total saído</div><div class="cv" style="color:var(--red)">${brl(totalS)}</div></div>
     <div class="card"><div class="cl">Saldo</div><div class="cv ${saldo>=0?'green':''}" style="${saldo<0?'color:var(--red)':''}">${brl(saldo)}</div></div>
-    <div class="card"><div class="cl">Parcelas completas</div><div class="cv">${nCompletas} / ${CC_PARCELAS.length}</div></div>
-    <div class="card"><div class="cl">Pagamentos recebidos</div><div class="cv">${nPagamentos} / ${CC_PAGADORES.length*CC_PARCELAS.length}</div></div>`;
+    <div class="card"><div class="cl">Em aberto</div><div class="cv" style="${totalEmAberto>0?'color:var(--red)':''}">${totalEmAberto>0?brl(totalEmAberto):'—'}</div></div>`;
 
-  // ── sub-tabs ──
-  document.getElementById('ccSubTabs').innerHTML=
-    `<button class="sc-tab${_ccSubTab==='parcelas'?' active':''}" data-tab="parcelas" onclick="showCCTab('parcelas')">📆 Parcelas</button>
-     <button class="sc-tab${_ccSubTab==='movimentacoes'?' active':''}" data-tab="movimentacoes" onclick="showCCTab('movimentacoes')">📋 Movimentações</button>`;
-  document.getElementById('ccSubTab-parcelas').style.display=_ccSubTab==='parcelas'?'':'none';
-  document.getElementById('ccSubTab-movimentacoes').style.display=_ccSubTab==='movimentacoes'?'':'none';
-
-  // ── parcelas ──
-  let pRows='';
-  CC_PARCELAS.forEach(p=>{
-    const pg=pPagas[p.num]||{};
-    const todosPageram=CC_PAGADORES.every(x=>pg[x.nome]);
-    const algumPagou=CC_PAGADORES.some(x=>pg[x.nome]);
-    const rowBg=todosPageram?'background:rgba(0,180,0,.06)':algumPagou?'background:rgba(255,180,0,.06)':'';
-    const cells=CC_PAGADORES.map(pgdr=>{
-      if(pg[pgdr.nome])return`<td style="text-align:center"><span style="color:var(--grn);font-size:.85rem">✅</span><br><small style="color:var(--txt2);font-size:.7rem">${brl(pgdr.valor)}</small></td>`;
-      return`<td style="text-align:center"><button class="btn btn-ghost btn-sm admin-only" style="font-size:.72rem;padding:2px 8px" onclick="quitarPessoaCC(${p.num},'${pgdr.nome}')">Quitar</button><br><small style="color:var(--txt2);font-size:.7rem">${brl(pgdr.valor)}</small></td>`;
-    }).join('');
-    const pagosCnt=CC_PAGADORES.filter(x=>pg[x.nome]).length;
-    const statusBadge=todosPageram
-      ?`<span style="color:var(--grn);font-weight:700;font-size:.78rem">✅ Completa</span>`
-      :pagosCnt>0
-        ?`<span style="color:#b45309;font-weight:600;font-size:.78rem">${pagosCnt}/${CC_PAGADORES.length} pagos</span>`
-        :`<span style="color:var(--txt2);font-size:.78rem">Em aberto</span>`;
-    pRows+=`<tr style="${rowBg}">
-      <td style="font-weight:700;text-align:center">${p.num}</td>
-      <td style="white-space:nowrap">${fmtD(p.data)}</td>
-      ${cells}
-      <td style="text-align:center">${statusBadge}</td></tr>`;
+  // ── investidores ──
+  const investRows=CC_INVESTIDORES.map(inv=>{
+    const real=realPorMembro[inv.nome]||0;
+    const aberto=Math.max(0,inv.meta-real);
+    const pct=Math.min(100,Math.round(real/inv.meta*100));
+    const cor=aberto===0?'var(--grn)':pct<30?'var(--red)':'#b45309';
+    return{inv,real,aberto,pct,cor};
+  }).sort((a,b)=>b.aberto-a.aberto||a.inv.nome.localeCompare(b.inv.nome,'pt-BR'));
+  let iRows='';
+  investRows.forEach(({inv,real,aberto,pct,cor})=>{
+    iRows+=`<tr style="${aberto===0?'opacity:.65':''}">
+      <td style="font-weight:${aberto>0?'500':'400'}">${inv.nome}</td>
+      <td class="tr" style="color:var(--txt2)">${brl(inv.meta)}</td>
+      <td class="tr">${brl(real)}</td>
+      <td class="tr" style="color:${cor};font-weight:${aberto>0?'600':'400'}">${aberto>0?brl(aberto):'—'}</td>
+      <td style="min-width:110px">
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="flex:1;background:var(--border);border-radius:4px;height:5px">
+            <div style="width:${pct}%;background:${cor};border-radius:4px;height:5px"></div>
+          </div>
+          <span style="font-size:.72rem;color:var(--txt2);min-width:28px">${pct}%</span>
+        </div>
+      </td></tr>`;
   });
-  // footer totais
-  const totPag=CC_PAGADORES.reduce((s,pg)=>s+pg.valor*CC_PARCELAS.length,0);
-  pRows+=`<tr style="background:var(--card2);font-weight:700">
-    <td colspan="2" style="font-size:.78rem">Total (${CC_PARCELAS.length} parcelas)</td>
-    ${CC_PAGADORES.map(pg=>`<td style="text-align:center;font-size:.78rem">${brl(pg.valor*CC_PARCELAS.length)}</td>`).join('')}
-    <td style="text-align:center;font-size:.78rem">${brl(totPag)}</td></tr>`;
-  document.getElementById('ccParcelasTbody').innerHTML=pRows;
+  document.getElementById('ccInvestTbody').innerHTML=iRows;
 
   // ── movimentações ──
   const sorted=movs.map((m,i)=>({m,i})).sort((a,b)=>{
@@ -3915,7 +3894,7 @@ function renderCompracasa(){
   document.getElementById('ccMovTbody').innerHTML=mRows;
 }
 
-function quitarPessoaCC(num,nome){
+function _removidoQuitarPessoaCC(num,nome){
   const pg=CC_PAGADORES.find(x=>x.nome===nome);
   if(!pg)return;
   const p=CC_PARCELAS.find(x=>x.num===num);
@@ -3925,7 +3904,7 @@ function quitarPessoaCC(num,nome){
   DB.compracasa.parcelasPagas[num][nome]=true;
   DB.compracasa.movimentacoes.push({
     id:uid(),data:p.data,cat:'aporte',
-    desc:`Parcela ${num}/10 — ${nome}`,
+    desc:`Parcela ${num}/12 — ${nome}`,
     membro:nome,valor:pg.valor,dir:'e'
   });
   salvarDB();renderCompracasa();
