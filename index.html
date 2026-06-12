@@ -1362,10 +1362,10 @@ function runMigrations(){
 
 // ─── SALDOS CALCULADOS ───
 function calcSaldoBar(){
-  return(DB.saldoAberturaBar||0)+DB.extratoBar.reduce((s,t)=>s+(t.dir==='entrada'?t.valor:-t.valor),0);
+  return(DB.saldoAberturaBar||0)+DB.extratoBar.reduce((s,t)=>s+(t.dir==='entrada'?Math.abs(t.valor):-Math.abs(t.valor)),0);
 }
 function calcSaldoHolding(){
-  return(DB.saldoAberturaHolding||0)+DB.extratoHolding.reduce((s,t)=>s+(t.dir==='entrada'?t.valor:-t.valor),0);
+  return(DB.saldoAberturaHolding||0)+DB.extratoHolding.reduce((s,t)=>s+(t.dir==='entrada'?Math.abs(t.valor):-Math.abs(t.valor)),0);
 }
 
 // ─── FIREBASE LISTENER ───
@@ -1631,10 +1631,10 @@ function renderResumo(){
   const ym=`${ano}-${mes}`;
   const barT=DB.extratoBar.filter(t=>getMes(t.data)===ym);
   const holdT=DB.extratoHolding.filter(t=>getMes(t.data)===ym);
-  const entBar=barT.filter(t=>t.dir==='entrada').reduce((s,t)=>s+t.valor,0);
-  const saiBar=barT.filter(t=>t.dir==='saida').reduce((s,t)=>s+t.valor,0);
-  const entHold=holdT.filter(t=>t.dir==='entrada').reduce((s,t)=>s+t.valor,0);
-  const saiHold=holdT.filter(t=>t.dir==='saida').reduce((s,t)=>s+t.valor,0);
+  const entBar=barT.filter(t=>t.dir==='entrada').reduce((s,t)=>s+Math.abs(t.valor),0);
+  const saiBar=barT.filter(t=>t.dir==='saida').reduce((s,t)=>s+Math.abs(t.valor),0);
+  const entHold=holdT.filter(t=>t.dir==='entrada').reduce((s,t)=>s+Math.abs(t.valor),0);
+  const saiHold=holdT.filter(t=>t.dir==='saida').reduce((s,t)=>s+Math.abs(t.valor),0);
   const resBar=entBar-saiBar,resHold=entHold-saiHold;
   document.getElementById('resumoCards').innerHTML=[
     {l:'Entradas Bar',v:brl(entBar),c:'green'},{l:'Saídas Bar',v:brl(saiBar),c:'red'},
@@ -1693,12 +1693,14 @@ function renderContaBar(){
   renderBarMesTabs();
   const mes = barMesAtivo;
   let txns=[...DB.extratoBar].filter(t=>getMes(t.data)===mes);
-  txns.sort((a,b)=>b.data.localeCompare(a.data)||(b.hora||'').localeCompare(a.hora||''));
-  const entTotal=txns.filter(t=>t.dir==='entrada').reduce((s,t)=>s+t.valor,0);
-  const saiTotal=txns.filter(t=>t.dir==='saida').reduce((s,t)=>s+t.valor,0);
+  const txnsIdx=txns.map((t,i)=>({...t,_idx:i}));
+  txnsIdx.sort((a,b)=>b.data.localeCompare(a.data)||b._idx-a._idx);
+  txns=txnsIdx;
+  const entTotal=txns.filter(t=>t.dir==='entrada').reduce((s,t)=>s+Math.abs(t.valor),0);
+  const saiTotal=txns.filter(t=>t.dir==='saida').reduce((s,t)=>s+Math.abs(t.valor),0);
   const res=entTotal-saiTotal;
   // Cards por categoria de entrada (top 3)
-  const saldoAnteriorBar=(DB.saldoAberturaBar||0)+DB.extratoBar.filter(t=>getMes(t.data)<mes).reduce((s,t)=>s+(t.dir==='entrada'?t.valor:-t.valor),0);
+  const saldoAnteriorBar=(DB.saldoAberturaBar||0)+DB.extratoBar.filter(t=>getMes(t.data)<mes).reduce((s,t)=>s+(t.dir==='entrada'?Math.abs(t.valor):-Math.abs(t.valor)),0);
   const saldoFinalBar=saldoAnteriorBar+res;
   document.getElementById('barCards').innerHTML=[
     {l:'Saldo inicial',v:brl(saldoAnteriorBar),c:saldoAnteriorBar>=0?'green':'red'},
@@ -1713,8 +1715,8 @@ function renderContaBar(){
   const diasDesc=[...new Set(txns.map(t=>t.data))].sort().reverse();
   const saldoDia={};let bal=saldoAnteriorBar;
   [...diasDesc].reverse().forEach(dia=>{
-    txns.filter(t=>t.data===dia).sort((a,b)=>(a.hora||'').localeCompare(b.hora||'')).forEach(t=>{
-      bal+=t.dir==='entrada'?t.valor:-t.valor;
+    txns.filter(t=>t.data===dia).forEach(t=>{
+      bal+=t.dir==='entrada'?Math.abs(t.valor):-Math.abs(t.valor);
     });
     saldoDia[dia]=bal;
   });
@@ -1723,14 +1725,14 @@ function renderContaBar(){
     const sd=saldoDia[dia];
     const cor=sd>=0?'var(--grn)':'var(--red)';
     rows+=`<tr style="background:var(--card2)"><td colspan="4" style="font-size:.7rem;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.4px;padding:4px 12px">🏁 Saldo final — ${fmtD(dia)}</td><td colspan="3" style="text-align:right;font-weight:700;color:${cor};padding:4px 12px;font-size:.82rem">${brl(sd)}</td></tr>`;
-    const dayTxns=txns.filter(t=>t.data===dia).sort((a,b)=>(b.hora||'').localeCompare(a.hora||''));
+    const dayTxns=txns.filter(t=>t.data===dia).sort((a,b)=>b._idx-a._idx);
     rows+=dayTxns.map(t=>`<tr>
     <td>${fmtD(t.data)}</td>
     <td style="max-width:260px;word-break:break-word">${t.nome}</td>
     <td><span class="chip">${t.tipo||'Pix'}</span></td>
     <td><select class="cat-sel" onchange="editarCatBar('${t.id}',this.value)">${catsBar.map(k=>`<option value="${k}"${t.cat===k?' selected':''}>${CATS_BAR[k]}</option>`).join('')}</select></td>
-    <td class="tr bold green">${t.dir==='entrada'?brl(t.valor):''}</td>
-    <td class="tr bold red">${t.dir==='saida'?brl(t.valor):''}</td>
+    <td class="tr bold green">${t.dir==='entrada'?brl(Math.abs(t.valor)):''}</td>
+    <td class="tr bold red">${t.dir==='saida'?brl(Math.abs(t.valor)):''}</td>
     <td class="admin-only" style="white-space:nowrap"><button class="btn btn-ghost btn-xs admin-only" onclick="abrirModalTxnManual('bar','${t.id}')" title="Editar">✏️</button> <button class="btn btn-danger btn-xs" onclick="deletarBarTxn('${t.id}')">🗑️</button></td>
   </tr>`).join('');
   });
@@ -1840,11 +1842,13 @@ function renderContaHolding(){
   renderHoldingMesTabs();
   const mes = holdingMesAtivo;
   let txns=[...DB.extratoHolding].filter(t=>getMes(t.data)===mes);
-  txns.sort((a,b)=>b.data.localeCompare(a.data));
-  const entTotal=txns.filter(t=>t.dir==='entrada').reduce((s,t)=>s+t.valor,0);
-  const saiTotal=txns.filter(t=>t.dir==='saida').reduce((s,t)=>s+t.valor,0);
+  const txnsHIdx=txns.map((t,i)=>({...t,_idx:i}));
+  txnsHIdx.sort((a,b)=>b.data.localeCompare(a.data)||b._idx-a._idx);
+  txns=txnsHIdx;
+  const entTotal=txns.filter(t=>t.dir==='entrada').reduce((s,t)=>s+Math.abs(t.valor),0);
+  const saiTotal=txns.filter(t=>t.dir==='saida').reduce((s,t)=>s+Math.abs(t.valor),0);
   const res=entTotal-saiTotal;
-  const saldoAnterior=(DB.saldoAberturaHolding||0)+DB.extratoHolding.filter(t=>getMes(t.data)<mes).reduce((s,t)=>s+(t.dir==='entrada'?t.valor:-t.valor),0);
+  const saldoAnterior=(DB.saldoAberturaHolding||0)+DB.extratoHolding.filter(t=>getMes(t.data)<mes).reduce((s,t)=>s+(t.dir==='entrada'?Math.abs(t.valor):-Math.abs(t.valor)),0);
   const saldoFinal=saldoAnterior+res;
   document.getElementById('holdingCards').innerHTML=[
     {l:'Saldo inicial',v:brl(saldoAnterior),c:saldoAnterior>=0?'green':'red'},
@@ -1860,7 +1864,7 @@ function renderContaHolding(){
   const diasDescH=[...new Set(txns.map(t=>t.data))].sort().reverse();
   const saldoDiaH={};let balH=saldoAnterior;
   [...diasDescH].reverse().forEach(dia=>{
-    txns.filter(t=>t.data===dia).forEach(t=>{balH+=t.dir==='entrada'?t.valor:-t.valor;});
+    txns.filter(t=>t.data===dia).forEach(t=>{balH+=t.dir==='entrada'?Math.abs(t.valor):-Math.abs(t.valor);});
     saldoDiaH[dia]=balH;
   });
   const corSF=saldoFinal>=0?'var(--grn)':'var(--red)';
@@ -1869,7 +1873,7 @@ function renderContaHolding(){
     const sdH=saldoDiaH[dia];
     const corH=sdH>=0?'var(--grn)':'var(--red)';
     rowsH+=`<tr style="background:var(--card2)"><td colspan="5" style="font-size:.7rem;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.4px;padding:4px 12px">📅 Saldo — ${fmtD(dia)}</td><td colspan="3" style="text-align:right;font-weight:700;color:${corH};padding:4px 12px;font-size:.82rem">${brl(sdH)}</td></tr>`;
-    const dayTxns=txns.filter(t=>t.data===dia).sort((a,b)=>a.desc.localeCompare(b.desc));
+    const dayTxns=txns.filter(t=>t.data===dia).sort((a,b)=>b._idx-a._idx);
     rowsH+=dayTxns.map(t=>{
       let cellMens='<td style="text-align:center;color:var(--border)">—</td>';
       if(t.cat==='mensalidade'){
@@ -1889,8 +1893,8 @@ function renderContaHolding(){
     <td><span class="chip" style="font-size:.65rem">${t.obs||'—'}</span></td>
     <td><select class="cat-sel" onchange="editarCatHolding('${t.id}',this.value)">${catsHolding.map(k=>`<option value="${k}"${t.cat===k?' selected':''}>${CATS_HOLDING[k]}</option>`).join('')}</select></td>
     ${cellMens}
-    <td class="tr bold green">${t.dir==='entrada'?brl(t.valor):''}</td>
-    <td class="tr bold red">${t.dir==='saida'?brl(t.valor):''}</td>
+    <td class="tr bold green">${t.dir==='entrada'?brl(Math.abs(t.valor)):''}</td>
+    <td class="tr bold red">${t.dir==='saida'?brl(Math.abs(t.valor)):''}</td>
     <td class="admin-only" style="white-space:nowrap"><button class="btn btn-ghost btn-xs" onclick="abrirModalTxnManual('holding','${t.id}')" title="Editar">✏️</button> <button class="btn btn-danger btn-xs" onclick="deletarHoldingTxn('${t.id}')">🗑️</button></td>
   </tr>`;}).join('');
   });
