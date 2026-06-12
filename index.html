@@ -1775,7 +1775,7 @@ function salvarTxnManual(){
   const dir   = document.getElementById('txnManualDir').value;
   const desc  = document.getElementById('txnManualDesc').value.trim();
   const obs   = document.getElementById('txnManualObs').value.trim();
-  const valor = parseFloat(document.getElementById('txnManualValor').value)||0;
+  const valor = Math.abs(parseFloat(document.getElementById('txnManualValor').value)||0);
   const cat   = document.getElementById('txnManualCat').value;
   if(!data||!desc||!valor){alert('Preencha data, descrição e valor.');return;}
   if(conta==='bar'){
