@@ -3934,7 +3934,7 @@ function gerarPDFCompracasa(){
   doc.text('Controle de Compra de Casa',MARG,12);
   doc.setFontSize(8.5);doc.setFont('helvetica','normal');
   doc.setTextColor(148,163,184);
-  doc.text('Sede Gremista — Caixa Baixa',MARG,19);
+  doc.text('Sede Caixa Baixa',MARG,19);
   doc.text(`Gerado em ${dtStr}`,MARG,25);
   let y=38;
 
@@ -4034,7 +4034,7 @@ function gerarPDFCompracasa(){
       const totalPages=doc.internal.getNumberOfPages();
       doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
       const ph=doc.internal.pageSize.height;
-      doc.text(`Sede Gremista — Caixa Baixa`,MARG,ph-7);
+      doc.text(`Sede Caixa Baixa`,MARG,ph-7);
       doc.text(`Página ${data.pageNumber} de ${totalPages}`,PW-MARG,ph-7,{align:'right'});
       doc.setDrawColor(...BORDER);doc.setLineWidth(0.3);
       doc.line(MARG,ph-10,PW-MARG,ph-10);
