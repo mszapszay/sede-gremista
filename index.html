@@ -683,6 +683,7 @@ body.viewer .admin-only{display:none!important}
 <div id="tab-compracasa" class="page">
   <div class="page-hdr">
     <div class="page-title">🏠 Compra Casa<small>Controle de aportes — R$ 150.000,00</small></div>
+    <button class="btn btn-ghost btn-sm" onclick="gerarPDFCompracasa()" style="margin-left:auto;display:flex;align-items:center;gap:5px">📄 Gerar PDF</button>
   </div>
   <div class="cards" id="ccCards"></div>
 
@@ -3894,6 +3895,155 @@ function renderCompracasa(){
   document.getElementById('ccMovTbody').innerHTML=mRows;
 }
 
+function gerarPDFCompracasa(){
+  if(!window.jspdf){alert('Biblioteca PDF ainda carregando, tente novamente em instantes.');return;}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const cc=DB.compracasa||{movimentacoes:[]};
+  const movs=cc.movimentacoes||[];
+
+  const DARK=[30,41,59];
+  const GRN_C=[21,128,61];
+  const RED_C=[185,28,28];
+  const LIGHT=[248,250,252];
+  const BORDER=[226,232,240];
+  const TEXT=[15,23,42];
+  const MUTED=[100,116,139];
+  const PW=210,MARG=14,CW=PW-MARG*2;
+
+  // Compute
+  const totalE=movs.filter(m=>m.dir==='e').reduce((s,m)=>s+Number(m.valor||0),0);
+  const totalS=movs.filter(m=>m.dir==='s').reduce((s,m)=>s+Number(m.valor||0),0);
+  const saldo=totalE-totalS;
+  const realPorMembro={};
+  movs.filter(m=>m.cat==='aporte'&&m.membro).forEach(m=>{
+    realPorMembro[m.membro]=(realPorMembro[m.membro]||0)+Number(m.valor||0);
+  });
+  const totalEmAberto=CC_INVESTIDORES.reduce((s,inv)=>s+Math.max(0,inv.meta-(realPorMembro[inv.nome]||0)),0);
+  const today=new Date();
+  const dd=String(today.getDate()).padStart(2,'0');
+  const mm=String(today.getMonth()+1).padStart(2,'0');
+  const yyyy=today.getFullYear();
+  const dtStr=`${dd}/${mm}/${yyyy}`;
+
+  // ── Header band ──
+  doc.setFillColor(...DARK);
+  doc.rect(0,0,PW,30,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(15);doc.setFont('helvetica','bold');
+  doc.text('Controle de Compra de Casa',MARG,12);
+  doc.setFontSize(8.5);doc.setFont('helvetica','normal');
+  doc.setTextColor(148,163,184);
+  doc.text('Sede Gremista — Caixa Baixa',MARG,19);
+  doc.text(`Gerado em ${dtStr}`,MARG,25);
+  let y=38;
+
+  // ── Resumo ──
+  doc.setFontSize(9.5);doc.setFont('helvetica','bold');doc.setTextColor(...TEXT);
+  doc.text('RESUMO GERAL',MARG,y);
+  y+=4;
+  const cardW=(CW-4*3)/5;
+  const cards=[
+    {label:'Total do imóvel',val:brl(150000),col:TEXT},
+    {label:'Total aportado',val:brl(totalE),col:GRN_C},
+    {label:'Total saído',val:brl(totalS),col:RED_C},
+    {label:'Saldo atual',val:brl(saldo),col:saldo>=0?GRN_C:RED_C},
+    {label:'Em aberto',val:totalEmAberto>0?brl(totalEmAberto):'Quitado',col:totalEmAberto>0?RED_C:GRN_C},
+  ];
+  cards.forEach((c,i)=>{
+    const cx=MARG+i*(cardW+3);
+    doc.setFillColor(...LIGHT);
+    doc.roundedRect(cx,y,cardW,17,1.5,1.5,'F');
+    doc.setDrawColor(...BORDER);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(cx,y,cardW,17,1.5,1.5,'S');
+    doc.setFontSize(6);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
+    doc.text(c.label,cx+cardW/2,y+5.5,{align:'center'});
+    doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(...c.col);
+    doc.text(c.val,cx+cardW/2,y+12,{align:'center'});
+  });
+  y+=23;
+
+  // ── Investidores ──
+  doc.setFontSize(9.5);doc.setFont('helvetica','bold');doc.setTextColor(...TEXT);
+  doc.text('SITUAÇÃO POR INVESTIDOR',MARG,y);
+  y+=2;
+  const investData=CC_INVESTIDORES.map(inv=>{
+    const real=realPorMembro[inv.nome]||0;
+    const aberto=Math.max(0,inv.meta-real);
+    const pct=Math.min(100,Math.round(real/inv.meta*100));
+    return{nome:inv.nome,meta:inv.meta,real,aberto,pct};
+  }).sort((a,b)=>b.aberto-a.aberto||a.nome.localeCompare(b.nome,'pt-BR'));
+
+  doc.autoTable({
+    startY:y,margin:{left:MARG,right:MARG},
+    head:[['Investidor','Meta','Realizado','Em aberto','%']],
+    body:investData.map(r=>[r.nome,brl(r.meta),brl(r.real),r.aberto>0?brl(r.aberto):'—',r.pct+'%']),
+    styles:{fontSize:8,cellPadding:2.5,lineColor:BORDER,lineWidth:0.3},
+    headStyles:{fillColor:DARK,textColor:255,fontStyle:'bold',fontSize:8},
+    columnStyles:{
+      0:{cellWidth:'auto'},
+      1:{halign:'right',cellWidth:30},
+      2:{halign:'right',cellWidth:30},
+      3:{halign:'right',cellWidth:30},
+      4:{halign:'right',cellWidth:14},
+    },
+    didParseCell(data){
+      if(data.section==='body'){
+        const r=investData[data.row.index];
+        if(r&&r.aberto===0)data.cell.styles.textColor=MUTED;
+        if(r&&r.aberto>0&&data.column.index===3){data.cell.styles.textColor=RED_C;data.cell.styles.fontStyle='bold';}
+        if(data.row.index%2===1)data.cell.styles.fillColor=LIGHT;
+      }
+    },
+  });
+  y=doc.lastAutoTable.finalY+10;
+
+  // ── Movimentações ──
+  if(y>240){doc.addPage();y=14;}
+  doc.setFontSize(9.5);doc.setFont('helvetica','bold');doc.setTextColor(...TEXT);
+  doc.text('MOVIMENTAÇÕES',MARG,y);
+  y+=2;
+  const sorted=movs.map((m,i)=>({m,i})).sort((a,b)=>{
+    const d=b.m.data.localeCompare(a.m.data);return d!==0?d:b.i-a.i;
+  }).map(({m})=>m);
+  const movBody=sorted.map(m=>[fmtD(m.data),m.desc||'',CC_CATS[m.cat]||m.cat,m.membro||'',m.dir==='e'?brl(m.valor):'',m.dir==='s'?brl(m.valor):'']);
+
+  doc.autoTable({
+    startY:y,margin:{left:MARG,right:MARG},
+    head:[['Data','Descrição','Categoria','Membro','Entrada','Saída']],
+    body:movBody,
+    styles:{fontSize:7.5,cellPadding:2,lineColor:BORDER,lineWidth:0.3,overflow:'linebreak'},
+    headStyles:{fillColor:DARK,textColor:255,fontStyle:'bold',fontSize:7.5},
+    columnStyles:{
+      0:{cellWidth:18},
+      1:{cellWidth:'auto'},
+      2:{cellWidth:26},
+      3:{cellWidth:30},
+      4:{halign:'right',cellWidth:22},
+      5:{halign:'right',cellWidth:22},
+    },
+    didParseCell(data){
+      if(data.section==='body'){
+        if(data.row.index%2===1)data.cell.styles.fillColor=LIGHT;
+        if(data.column.index===4&&data.cell.raw){data.cell.styles.textColor=GRN_C;data.cell.styles.fontStyle='bold';}
+        if(data.column.index===5&&data.cell.raw){data.cell.styles.textColor=RED_C;data.cell.styles.fontStyle='bold';}
+      }
+    },
+    didDrawPage(data){
+      const totalPages=doc.internal.getNumberOfPages();
+      doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
+      const ph=doc.internal.pageSize.height;
+      doc.text(`Sede Gremista — Caixa Baixa`,MARG,ph-7);
+      doc.text(`Página ${data.pageNumber} de ${totalPages}`,PW-MARG,ph-7,{align:'right'});
+      doc.setDrawColor(...BORDER);doc.setLineWidth(0.3);
+      doc.line(MARG,ph-10,PW-MARG,ph-10);
+    },
+  });
+
+  doc.save(`compra-casa-relatorio-${dd}-${mm}-${yyyy}.pdf`);
+}
+
 function _removidoQuitarPessoaCC(num,nome){
   const pg=CC_PAGADORES.find(x=>x.nome===nome);
   if(!pg)return;
@@ -4052,5 +4202,7 @@ function removerMovCC(id){
     </div>
   </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.6.0/jspdf.plugin.autotable.min.js"></script>
 </body>
 </html>
