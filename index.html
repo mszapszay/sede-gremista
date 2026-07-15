@@ -1101,6 +1101,8 @@ const CATS_HOLDING={
   resgate_aplic_colchao:'Resgate Aplicação Colchão Financeiro',
   aporte_aplic_obra:'Aporte Aplicação Obra',
   resgate_aplic_obra:'Resgate Aplicação Obra',
+  aporte_aplic_compracasa:'Aporte Aplicação Compra Casa',
+  resgate_aplic_compracasa:'Resgate Aplicação Compra Casa',
   outros_rec:'Outras Entradas',
   manutencao:'Manutenção',
   reforma:'Reforma',
@@ -4080,9 +4082,10 @@ function gerarPDFCompracasa(){
 
 // ─── CONTROLE DE APLICAÇÕES ───
 const APLICACOES=[
-  {key:'reforma',   label:'Reforma',              icon:'🔨', catAporte:'aporte_aplic_reforma',  catResgate:'resgate_aplic_reforma'},
-  {key:'colchao',   label:'Colchão Financeiro',   icon:'💰', catAporte:'aporte_aplic_colchao',  catResgate:'resgate_aplic_colchao'},
-  {key:'obra',      label:'Obra',                 icon:'🏗️', catAporte:'aporte_aplic_obra',     catResgate:'resgate_aplic_obra'},
+  {key:'reforma',    label:'Reforma',              icon:'🔨', catAporte:'aporte_aplic_reforma',    catResgate:'resgate_aplic_reforma'},
+  {key:'colchao',    label:'Colchão Financeiro',   icon:'💰', catAporte:'aporte_aplic_colchao',    catResgate:'resgate_aplic_colchao'},
+  {key:'obra',       label:'Obra',                 icon:'🏗️', catAporte:'aporte_aplic_obra',       catResgate:'resgate_aplic_obra'},
+  {key:'compracasa', label:'Compra Casa',           icon:'🏠', catAporte:'aporte_aplic_compracasa', catResgate:'resgate_aplic_compracasa'},
 ];
 let aplicacaoAtiva='reforma';
 
