@@ -1094,8 +1094,6 @@ const CATS_HOLDING={
   mensalidade:'Mensalidade',
   comanda:'Comanda',
   aporte_casa:'Compra Casa',
-  aporte_aplic_reforma:'Aporte Aplicação Reforma',
-  resgate_aplic_reforma:'Resgate Aplicação Reforma',
   aporte_aplic_colchao:'Aporte Aplicação Colchão Financeiro',
   resgate_aplic_colchao:'Resgate Aplicação Colchão Financeiro',
   aporte_aplic_obra:'Aporte Aplicação Obra',
@@ -1384,6 +1382,16 @@ function runMigrations(){
       }
     });
     DB.migAutoVincular=true;
+    changed=true;
+  }
+
+  // Migrar aporte_aplic_reforma / resgate_aplic_reforma → obra
+  if(!DB.migReforma2Obra){
+    DB.extratoHolding.forEach(t=>{
+      if(t.cat==='aporte_aplic_reforma'){t.cat='aporte_aplic_obra';changed=true;}
+      else if(t.cat==='resgate_aplic_reforma'){t.cat='resgate_aplic_obra';changed=true;}
+    });
+    DB.migReforma2Obra=true;
     changed=true;
   }
 
