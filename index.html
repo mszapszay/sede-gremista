@@ -402,6 +402,7 @@ body.viewer .admin-only{display:none!important}
   <div class="nav-item" data-tab="bar" onclick="showTab('bar')"><span class="ico">🍺</span>Conta Bar</div>
   <div class="nav-item" data-tab="holding" onclick="showTab('holding')"><span class="ico">🏦</span>Conta Holding</div>
   <div class="nav-item" data-tab="compracasa" onclick="showTab('compracasa')"><span class="ico">🏠</span>Compra Casa</div>
+  <div class="nav-item" data-tab="aplicacoes" onclick="showTab('aplicacoes')"><span class="ico">📊</span>Aplicações</div>
 
   <div class="nav-sep"></div>
   <div class="nav-grp">Eventos</div>
@@ -714,6 +715,29 @@ body.viewer .admin-only{display:none!important}
       <th class="admin-only"></th>
     </tr></thead>
     <tbody id="ccMovTbody"></tbody>
+  </table></div>
+</div>
+
+<!-- APLICAÇÕES -->
+<div id="tab-aplicacoes" class="page">
+  <div class="page-hdr">
+    <div class="page-title">📊 Controle de Aplicações<small>Derivado das movimentações da Conta Holding</small></div>
+  </div>
+  <div id="aplTabs" style="display:flex;gap:8px;margin-bottom:4px;flex-wrap:wrap"></div>
+  <div class="cards" id="aplCards"></div>
+  <div class="sh" style="margin-top:20px;padding-top:12px">
+    <h2 id="aplSubTitle">Movimentações</h2>
+  </div>
+  <div class="tw"><table id="aplTable">
+    <thead><tr>
+      <th>Data</th>
+      <th>Descrição</th>
+      <th>Obs</th>
+      <th class="tr">Aporte</th>
+      <th class="tr">Resgate</th>
+      <th class="tr">Saldo</th>
+    </tr></thead>
+    <tbody id="aplTbody"></tbody>
   </table></div>
 </div>
 
@@ -1072,8 +1096,11 @@ const CATS_HOLDING={
   aporte_reforma:'Aporte Reforma',
   aporte_casa:'Compra Casa',
   aporte_aplic_reforma:'Aporte Aplicação Reforma',
+  resgate_aplic_reforma:'Resgate Aplicação Reforma',
   aporte_aplic_colchao:'Aporte Aplicação Colchão Financeiro',
+  resgate_aplic_colchao:'Resgate Aplicação Colchão Financeiro',
   aporte_aplic_obra:'Aporte Aplicação Obra',
+  resgate_aplic_obra:'Resgate Aplicação Obra',
   outros_rec:'Outras Entradas',
   manutencao:'Manutenção',
   reforma:'Reforma',
@@ -1476,7 +1503,7 @@ const TAB_RENDERERS={
   dashboard:renderDash,calendario:renderSedeCalendar,jogos:renderJogos,
   estoque:renderEstoque,mensalidades:renderMensalidades,resumo:renderResumo,
   comandas:renderComandas,bar:renderContaBar,holding:renderContaHolding,membros:renderMembros,
-  compracasa:renderCompracasa
+  compracasa:renderCompracasa,aplicacoes:renderAplicacoes
 };
 function renderCurrentTab(){if(!DB)return;TAB_RENDERERS[currentTab]?.();}
 function showTab(name){
@@ -4049,6 +4076,71 @@ function gerarPDFCompracasa(){
   });
 
   doc.save(`compra-casa-relatorio-${dd}-${mm}-${yyyy}.pdf`);
+}
+
+// ─── CONTROLE DE APLICAÇÕES ───
+const APLICACOES=[
+  {key:'reforma',   label:'Reforma',              icon:'🔨', catAporte:'aporte_aplic_reforma',  catResgate:'resgate_aplic_reforma'},
+  {key:'colchao',   label:'Colchão Financeiro',   icon:'💰', catAporte:'aporte_aplic_colchao',  catResgate:'resgate_aplic_colchao'},
+  {key:'obra',      label:'Obra',                 icon:'🏗️', catAporte:'aporte_aplic_obra',     catResgate:'resgate_aplic_obra'},
+];
+let aplicacaoAtiva='reforma';
+
+function showAplicacaoTab(key){aplicacaoAtiva=key;renderAplicacoes();}
+
+function renderAplicacoes(){
+  if(!DB)return;
+  const apl=APLICACOES.find(a=>a.key===aplicacaoAtiva)||APLICACOES[0];
+
+  // sub-tabs
+  document.getElementById('aplTabs').innerHTML=APLICACOES.map(a=>`
+    <button class="mes-tab${a.key===aplicacaoAtiva?' active':''}" onclick="showAplicacaoTab('${a.key}')">${a.icon} ${a.label}</button>
+  `).join('');
+
+  // filtrar movimentações da holding
+  const holding=DB.extratoHolding||[];
+  const txns=holding.filter(t=>t.cat===apl.catAporte||t.cat===apl.catResgate);
+
+  // totais
+  const totalAportado=txns.filter(t=>t.cat===apl.catAporte).reduce((s,t)=>s+Math.abs(t.valor),0);
+  const totalResgatado=txns.filter(t=>t.cat===apl.catResgate).reduce((s,t)=>s+Math.abs(t.valor),0);
+  const saldoAtual=totalAportado-totalResgatado;
+
+  document.getElementById('aplCards').innerHTML=[
+    {l:'Total aportado',  v:brl(totalAportado),  c:'green'},
+    {l:'Total resgatado', v:totalResgatado>0?brl(totalResgatado):'—', c:totalResgatado>0?'red':''},
+    {l:'Saldo atual',     v:brl(saldoAtual),     c:saldoAtual>=0?'green':'red'},
+  ].map(c=>`<div class="card"><div class="cl">${c.l}</div><div class="cv ${c.c}">${c.v}</div></div>`).join('');
+
+  document.getElementById('aplSubTitle').textContent=`Movimentações — ${apl.icon} ${apl.label}`;
+
+  // ordenar cronológico crescente para calcular saldo corrido, depois reverter para exibir mais recente em cima
+  const sorted=[...txns].sort((a,b)=>a.data.localeCompare(b.data));
+  let bal=0;
+  const withBal=sorted.map(t=>{
+    const isAporte=t.cat===apl.catAporte;
+    const v=Math.abs(t.valor);
+    bal+=isAporte?v:-v;
+    return{t,isAporte,v,bal};
+  });
+  withBal.reverse();
+
+  const tbody=document.getElementById('aplTbody');
+  if(!withBal.length){
+    tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;color:var(--txt2);padding:20px">Nenhuma movimentação registrada para esta aplicação.<br><small>Classifique transações na Conta Holding com a categoria <strong>${CATS_HOLDING[apl.catAporte]}</strong> ou <strong>${CATS_HOLDING[apl.catResgate]}</strong>.</small></td></tr>`;
+    return;
+  }
+  tbody.innerHTML=withBal.map(({t,isAporte,v,bal})=>{
+    const corBal=bal>=0?'var(--grn)':'var(--red)';
+    return`<tr>
+      <td>${fmtD(t.data)}</td>
+      <td style="max-width:240px;word-break:break-word">${t.desc||t.nome||''}</td>
+      <td><span class="chip" style="font-size:.65rem">${t.obs||t.detalhe||'—'}</span></td>
+      <td class="tr bold green">${isAporte?brl(v):''}</td>
+      <td class="tr bold red">${!isAporte?brl(v):''}</td>
+      <td class="tr bold" style="color:${corBal}">${brl(bal)}</td>
+    </tr>`;
+  }).join('');
 }
 
 function _removidoQuitarPessoaCC(num,nome){
